@@ -5362,16 +5362,31 @@ function exportQuadrosPdf() {
 <script type="module">
   import { initCalendario } from "./calendario.js";
 
-  // Iniciar calendário quando o separador for clicado
   let calIniciado = false;
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (btn.dataset.target === 'sec-calendario' && !calIniciado) {
-        calIniciado = true;
-        initCalendario();
+  function activateCalTab() {
+    if (!calIniciado) {
+      calIniciado = true;
+      initCalendario();
+    }
+  }
+
+  // Hook into tab buttons AFTER DOM ready
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      if (btn.dataset.target === 'sec-calendario') {
+        btn.addEventListener('click', activateCalTab);
       }
     });
   });
+
+  // Also observe if section becomes active (in case tab logic runs first)
+  const obs = new MutationObserver(() => {
+    const sec = document.getElementById('sec-calendario');
+    if (sec && sec.classList.contains('active') && !calIniciado) {
+      activateCalTab();
+    }
+  });
+  obs.observe(document.body, { subtree: true, attributeFilter: ['class'] });
 </script>
 </body>
 </html>
