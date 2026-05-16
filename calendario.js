@@ -274,7 +274,8 @@ function renderGrid() {
       let profHtml = "";
       if (isProf) {
         profHtml = `<div class="cal-prof-bar">
-          <label>Vagas <input class="cal-inp-v" type="number" data-id="${id}" value="${vagas}" min="1" max="30"></label>
+          <label>🕐 <input class="cal-inp-hora" type="time" data-id="${id}" data-dt="${dt}" data-oldhora="${hora}" value="${hora}"></label>
+          <label>👥 <input class="cal-inp-v" type="number" data-id="${id}" value="${vagas}" min="1" max="30"></label>
           <select class="cal-sel-t" data-id="${id}">${TIPOS_AULA.map(t=>`<option${t===aula.tipo?" selected":""}>${t}</option>`).join("")}</select>
         </div>`;
       }
@@ -307,6 +308,24 @@ function renderGrid() {
   grid.querySelectorAll(".cal-inp-v").forEach(inp =>
     inp.addEventListener("change", () =>
       updateDoc(doc(db,"aulas",inp.dataset.id),{vagas:parseInt(inp.value)||8})));
+  grid.querySelectorAll(".cal-inp-hora").forEach(inp =>
+    inp.addEventListener("change", async () => {
+      const novaHora = inp.value;
+      const oldId    = inp.dataset.id;
+      const dt       = inp.dataset.dt;
+      if (!novaHora || novaHora === inp.dataset.oldhora) return;
+      if (!confirm(`Alterar hora para ${novaHora}?`)) { inp.value = inp.dataset.oldhora; return; }
+      // Criar novo doc com nova hora, copiar dados, apagar antigo
+      const ref  = doc(db,"aulas",oldId);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) return;
+      const dados = snap.data();
+      const novoId  = aulaId(dt, novaHora);
+      await setDoc(doc(db,"aulas",novoId), { ...dados, hora: novaHora });
+      await updateDoc(ref, { hora: novaHora }); // mantém o doc antigo atualizado também
+      inp.dataset.oldhora = novaHora;
+      await atualizarSemana();
+    }));
   grid.querySelectorAll(".cal-sel-t").forEach(sel =>
     sel.addEventListener("change", () =>
       updateDoc(doc(db,"aulas",sel.dataset.id),{tipo:sel.value})));
@@ -483,14 +502,15 @@ function renderCalendario() {
       btn.disabled=true; btn.textContent="A gerar...";
       await gerarSemana(semanaOff);
       btn.textContent="✅ GERADO!";
+      await atualizarSemana();
       setTimeout(()=>{btn.disabled=false;btn.textContent="⚙️ GERAR AULAS";},2000);
     });
 
     const togglePainel = (id, renderFn) => {
       const p = document.getElementById(id);
-      const visible = p.style.display!=="none";
+      const jaAberto = p.style.display==="block";
       document.querySelectorAll(".cal-painel").forEach(x=>x.style.display="none");
-      if (!visible) { p.style.display="block"; renderFn && renderFn(); }
+      if (!jaAberto) { p.style.display="block"; renderFn && renderFn(); }
     };
 
     document.getElementById("cal-tab-alunos").addEventListener("click", () => togglePainel("cal-painel-alunos", renderAlunos));
