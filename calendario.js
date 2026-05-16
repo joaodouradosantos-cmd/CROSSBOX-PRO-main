@@ -473,7 +473,8 @@ function renderCalendario() {
         <button class="cal-btn-gerar" id="cal-gerar">⚙️ GERAR AULAS</button>
         <button class="cal-btn-tool" id="cal-tab-alunos">👥 ALUNOS</button>
         <button class="cal-btn-tool" id="cal-tab-conv">🔗 CONVITES</button>
-      </div>`:""}
+      </div>
+      <div id="cal-debug" style="font-size:.7rem;color:#555;margin-top:4px;"></div>`:""}
     </div>
 
     <div id="cal-grid" class="cal-grid"><div class="cal-loading">🔄 A carregar...</div></div>
@@ -506,11 +507,24 @@ function renderCalendario() {
       setTimeout(()=>{btn.disabled=false;btn.textContent="⚙️ GERAR AULAS";},2000);
     });
 
+    let painelAtivo = null;
+
     const togglePainel = (id, renderFn) => {
       const p = document.getElementById(id);
-      const jaAberto = p.style.display==="block";
-      document.querySelectorAll(".cal-painel").forEach(x=>x.style.display="none");
-      if (!jaAberto) { p.style.display="block"; renderFn && renderFn(); }
+      const dbg = document.getElementById("cal-debug");
+      if (!p) { if(dbg) dbg.textContent="ERRO: painel "+id+" não encontrado"; return; }
+      if (painelAtivo === id) {
+        p.style.display = "none";
+        painelAtivo = null;
+        if(dbg) dbg.textContent="";
+      } else {
+        document.querySelectorAll(".cal-painel").forEach(x => x.style.display = "none");
+        p.style.display = "block";
+        p.scrollIntoView({ behavior: "smooth", block: "start" });
+        painelAtivo = id;
+        if(dbg) dbg.textContent="Painel aberto: "+id;
+        if (renderFn) renderFn();
+      }
     };
 
     document.getElementById("cal-tab-alunos").addEventListener("click", () => togglePainel("cal-painel-alunos", renderAlunos));
