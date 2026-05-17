@@ -20,6 +20,14 @@
   filter: drop-shadow(0 0 8px rgba(180,160,60,.5));
 }
 
+.cal-login-logo {
+  display: block;
+  width: 110px;
+  height: auto;
+  margin: 0 auto 12px;
+  filter: drop-shadow(0 0 10px rgba(180,160,60,.4));
+}
+
 .cal-login-title {
   font-family: 'Stardos Stencil', 'Arial Black', sans-serif;
   font-size: 1.25rem;
