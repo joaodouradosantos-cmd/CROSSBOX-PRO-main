@@ -710,3 +710,193 @@
   color: #4a8a3a;
 }
 .cal-btn-reabrir-dia:hover { border-color: #4a8a2a; color: #7acc4a; }
+
+/* ── Teclado PIN ──────────────────────────────────────────── */
+.cal-pin-dots {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 16px 0 12px;
+}
+.cal-pin-dots span {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #2a2a1a;
+  border: 2px solid #3a3a2a;
+  transition: background .15s, border-color .15s;
+}
+.cal-pin-dots span.active {
+  background: #c8b84a;
+  border-color: #c8b84a;
+  box-shadow: 0 0 8px rgba(200,184,74,.4);
+}
+.cal-pin-teclado {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.cal-pin-key {
+  padding: 14px;
+  background: #1a1a10;
+  border: 1px solid #2a2a18;
+  color: #d4c87a;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background .1s;
+}
+.cal-pin-key:hover { background: #252515; }
+.cal-pin-key:active { background: #303018; }
+.cal-pin-key-vazio { opacity: 0; pointer-events: none; }
+.cal-pin-erro {
+  text-align: center;
+  color: #8a2a2a;
+  font-size: .8rem;
+  min-height: 18px;
+  letter-spacing: .05em;
+}
+
+/* ── Modal segurança ─────────────────────────────────────── */
+.cal-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+}
+.cal-modal {
+  background: linear-gradient(160deg,#1a1a14,#111109);
+  border: 1px solid #3a3a2a;
+  border-radius: 6px;
+  padding: 20px;
+  width: 100%;
+  max-width: 340px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.cal-modal-titulo {
+  font-family: 'Stardos Stencil','Arial Black',sans-serif;
+  font-size: 1rem;
+  color: #c8b84a;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  text-align: center;
+  border-bottom: 1px solid #2a2a1a;
+  padding-bottom: 10px;
+}
+.cal-modal-sec {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #1a1a10;
+}
+.cal-modal-label {
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cal-pill-ok {
+  font-size: .6rem;
+  background: #0a2010;
+  color: #4a8a3a;
+  border: 1px solid #2a5a1a;
+  padding: 2px 6px;
+  border-radius: 2px;
+  letter-spacing: .1em;
+}
+
+/* ── Aviso aulas canceladas ──────────────────────────────── */
+.cal-aviso-banner {
+  background: linear-gradient(160deg,#2a0a0a,#1a0606);
+  border: 1px solid #6a1a1a;
+  border-radius: 4px;
+  padding: 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 0 0 1px #3a0a0a;
+}
+.cal-aviso-titulo {
+  font-family: 'Stardos Stencil','Arial Black',sans-serif;
+  font-size: .9rem;
+  color: #cc4a4a;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.cal-aviso-item {
+  font-size: .82rem;
+  color: #d4a0a0;
+  padding: 4px 0;
+  border-bottom: 1px solid #2a0a0a;
+}
+
+/* ── Professor inscrever aluno ───────────────────────────── */
+.cal-prof-inscrever {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #2a2a1a;
+}
+.cal-inp-prof-nome, .cal-inp-prof-tel {
+  flex: 1;
+  min-width: 100px;
+  padding: 5px 8px;
+  background: #0d0d0d;
+  border: 1px solid #2a2a1a;
+  color: #d4c87a;
+  border-radius: 2px;
+  font-size: .75rem;
+}
+.cal-btn-prof-add {
+  padding: 5px 10px;
+  background: linear-gradient(160deg,#2a5a1a,#1a3a0a);
+  border: none;
+  color: #a0d080;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.cal-btn-prof-add:hover { opacity: .85; }
+
+/* ── Botão ícone segurança ───────────────────────────────── */
+.cal-btn-icon {
+  background: transparent;
+  border: 1px solid #2a2a1a;
+  color: #666;
+  width: 30px;
+  height: 30px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: .85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color .15s, color .15s;
+}
+.cal-btn-icon:hover { border-color: #555; color: #aaa; }
+
+/* ── Total alunos ────────────────────────────────────────── */
+.cal-alunos-count {
+  font-size: .75rem;
+  color: #555;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #1a1a10;
+}
