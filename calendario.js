@@ -872,6 +872,7 @@ function renderCalendario() {
         <button class="cal-btn-gerar" id="cal-gerar">⚙️ GERAR AULAS</button>
         <button class="cal-btn-tool" id="cal-tab-alunos">👥 ALUNOS</button>
         <button class="cal-btn-tool" id="cal-tab-conv">🔗 CONVITES</button>
+        <button class="cal-btn-tool" id="cal-tab-presencas">📊 PRESENÇAS</button>
       </div>
       <div id="cal-debug" style="font-size:.7rem;color:#555;margin-top:4px;"></div>`:""}
     </div>
@@ -887,6 +888,11 @@ function renderCalendario() {
     <div id="cal-painel-conv" class="cal-painel" style="display:none;">
       <div class="cal-painel-titulo">🔗 CONVITES</div>
       <div id="cal-convites-div"></div>
+    </div>
+    <div id="cal-painel-presencas" class="cal-painel" style="display:none;">
+      <div class="cal-painel-titulo">📊 PRESENÇAS POR ALUNO</div>
+      <p class="cal-helper">Contagem de aulas por aluno nos últimos 6 meses. Inscrito = presente.</p>
+      <div id="cal-presencas-div"></div>
     </div>`:""}
   `;
 
@@ -923,6 +929,7 @@ function renderCalendario() {
     };
     document.getElementById("cal-tab-alunos").addEventListener("click", ()=>togglePainel("cal-painel-alunos",renderAlunos));
     document.getElementById("cal-tab-conv").addEventListener("click",   ()=>togglePainel("cal-painel-conv",renderConvites));
+    document.getElementById("cal-tab-presencas").addEventListener("click", ()=>togglePainel("cal-painel-presencas",renderPresencasProfessor));
   }
 
   // Pedir permissão notificações
@@ -968,6 +975,177 @@ async function entrarNaApp() {
     document.getElementById("cal-skip-seg").addEventListener("click", renderCalendario);
   } else {
     renderCalendario();
+  }
+}
+
+
+// ─── PRESENÇAS DO ALUNO (secção WOD & Tools) ─────────────────
+export async function carregarPresencas() {
+  const wrap = document.getElementById("presencas-wrap");
+  if (!wrap) return;
+
+  // Recuperar sessão
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem("crossbox_cal_session")); } catch {}
+
+  if (!s || s.tipo === "prof") {
+    wrap.innerHTML = `<div class="helper-text">Abre o separador <strong>📅 Aulas</strong> e entra com os teus dados para ver as tuas presenças.</div>`;
+    return;
+  }
+
+  wrap.innerHTML = `<div class="helper-text">A carregar...</div>`;
+
+  const hoje    = new Date();
+  const hojeStr = hoje.toISOString().slice(0,10);
+  const agoraStr = hoje.toTimeString().slice(0,5);
+
+  try {
+    const snap = await getDocs(collection(db,"aulas"));
+    const minhas = [];
+
+    snap.forEach(d => {
+      const a = d.data();
+      const inscrito = (a.inscritos||[]).some(x => x.tel === s.tel);
+      if (!inscrito) return;
+      // Só conta aulas que já passaram (presença confirmada)
+      const passou = a.data < hojeStr || (a.data === hojeStr && a.hora < agoraStr);
+      if (passou && !a.cancelada) minhas.push(a);
+    });
+
+    // Ordenar por data desc
+    minhas.sort((a,b) => (b.data+b.hora).localeCompare(a.data+a.hora));
+
+    // Agrupar por mês
+    const porMes = {};
+    minhas.forEach(a => {
+      const mes = a.data.slice(0,7); // YYYY-MM
+      if (!porMes[mes]) porMes[mes] = [];
+      porMes[mes].push(a);
+    });
+
+    const mesesStr = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+                      "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+    const diasStr  = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+
+    if (!minhas.length) {
+      wrap.innerHTML = `<div class="helper-text">Ainda não tens presenças registadas. Marca aulas no separador 📅 Aulas!</div>`;
+      return;
+    }
+
+    // Resumo do mês atual
+    const mesAtual = hojeStr.slice(0,7);
+    const totalMesAtual = (porMes[mesAtual]||[]).length;
+    const totalGeral    = minhas.length;
+
+    let html = `
+      <div class="presencas-resumo">
+        <div class="presencas-stat">
+          <div class="presencas-num">${totalMesAtual}</div>
+          <div class="presencas-label">AULAS ESTE MÊS</div>
+        </div>
+        <div class="presencas-stat">
+          <div class="presencas-num">${totalGeral}</div>
+          <div class="presencas-label">TOTAL GERAL</div>
+        </div>
+      </div>`;
+
+    // Detalhe por mês
+    Object.keys(porMes).sort().reverse().forEach(mes => {
+      const [ano, m] = mes.split("-");
+      const nomeMes  = mesesStr[parseInt(m)-1];
+      const aulas    = porMes[mes];
+      html += `
+        <div class="presencas-mes">
+          <div class="presencas-mes-hdr">
+            <span>${nomeMes} ${ano}</span>
+            <span class="presencas-mes-total">${aulas.length} aula${aulas.length!==1?"s":""}</span>
+          </div>
+          <div class="presencas-lista">
+            ${aulas.map(a => {
+              const dow = new Date(a.data+"T12:00:00").getDay();
+              return `<div class="presencas-item">
+                <span class="presencas-dia">${diasStr[dow]} ${a.data.slice(8)}/${m}</span>
+                <span class="presencas-hora">${a.hora}</span>
+                <span class="presencas-tipo">${a.tipo||"WOD"}</span>
+              </div>`;
+            }).join("")}
+          </div>
+        </div>`;
+    });
+
+    wrap.innerHTML = html;
+
+  } catch(e) {
+    wrap.innerHTML = `<div class="helper-text">Erro ao carregar: ${e.message}</div>`;
+  }
+}
+
+// ─── PRESENÇAS POR ALUNO (painel professor) ───────────────────
+async function renderPresencasProfessor() {
+  const div = document.getElementById("cal-presencas-div");
+  if (!div) return;
+  div.innerHTML = `<div class="cal-loading">A carregar...</div>`;
+
+  const hojeStr  = new Date().toISOString().slice(0,10);
+  const agoraStr = new Date().toTimeString().slice(0,5);
+  const mesesStr = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+
+  try {
+    // Buscar todos os alunos ativos
+    const alunosSnap = await getDocs(collection(db,"alunos"));
+    const alunos = [];
+    alunosSnap.forEach(d => { if (!d.data().bloqueado) alunos.push(d.data()); });
+
+    // Buscar todas as aulas passadas
+    const aulasSnap = await getDocs(collection(db,"aulas"));
+    const aulasPassadas = [];
+    aulasSnap.forEach(d => {
+      const a = d.data();
+      const passou = a.data < hojeStr || (a.data === hojeStr && a.hora < agoraStr);
+      if (passou && !a.cancelada) aulasPassadas.push(a);
+    });
+
+    if (!alunos.length) { div.innerHTML="<em>Nenhum aluno registado.</em>"; return; }
+
+    // Calcular presenças por aluno
+    const stats = alunos.map(aluno => {
+      const porMes = {};
+      aulasPassadas.forEach(a => {
+        if ((a.inscritos||[]).some(x => x.tel === aluno.tel)) {
+          const mes = a.data.slice(0,7);
+          porMes[mes] = (porMes[mes]||0) + 1;
+        }
+      });
+      const total = Object.values(porMes).reduce((s,v)=>s+v,0);
+      return { ...aluno, porMes, total };
+    }).sort((a,b) => b.total - a.total);
+
+    // Meses disponíveis (últimos 6)
+    const meses = [];
+    for (let i = 0; i < 6; i++) {
+      const d = new Date(); d.setMonth(d.getMonth()-i);
+      meses.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`);
+    }
+
+    let html = `
+      <div class="cal-presencas-tabela">
+        <div class="cal-pres-hdr">
+          <span>ALUNO</span>
+          ${meses.map(m => `<span>${mesesStr[parseInt(m.slice(5))-1]}</span>`).join("")}
+          <span>TOTAL</span>
+        </div>
+        ${stats.map(a => `
+          <div class="cal-pres-row">
+            <span class="cal-pres-nome">${a.nome}</span>
+            ${meses.map(m => `<span class="cal-pres-val ${(a.porMes[m]||0)===0?"cal-pres-zero":""}">${a.porMes[m]||0}</span>`).join("")}
+            <span class="cal-pres-total">${a.total}</span>
+          </div>`).join("")}
+      </div>`;
+
+    div.innerHTML = html;
+
+  } catch(e) {
+    div.innerHTML = `<div class="cal-erro">Erro: ${e.message}</div>`;
   }
 }
 
