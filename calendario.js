@@ -429,7 +429,7 @@ function renderLogin() {
   const wrap = document.getElementById("cal-wrap");
   wrap.innerHTML = `
     <div class="cal-login-box">
-      <div class="cal-login-icon">⚔️</div>
+      <img src="./imagens/logo.png" class="cal-login-logo" alt="CrossFit Moita"/>
       <div class="cal-login-title">CALENDÁRIO DE AULAS</div>
       <div class="cal-login-sub">CROSSFIT MOITA</div>
 
