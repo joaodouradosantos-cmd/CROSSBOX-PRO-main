@@ -900,3 +900,117 @@
   padding-bottom: 8px;
   border-bottom: 1px solid #1a1a10;
 }
+
+/* ── Presenças aluno (WOD & Tools) ───────────────────────── */
+.presencas-resumo {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.presencas-stat {
+  flex: 1;
+  background: linear-gradient(160deg,#1a1a10,#111109);
+  border: 1px solid #3a3a1a;
+  border-radius: 4px;
+  padding: 14px;
+  text-align: center;
+}
+.presencas-num {
+  font-family: 'Stardos Stencil','Arial Black',sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #c8b84a;
+  line-height: 1;
+}
+.presencas-label {
+  font-size: .65rem;
+  color: #555;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.presencas-mes {
+  margin-bottom: 12px;
+  border: 1px solid #2a2a1a;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.presencas-mes-hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1a1a10;
+  padding: 8px 12px;
+  font-size: .8rem;
+  font-weight: 700;
+  color: #c8b84a;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.presencas-mes-total {
+  font-size: .75rem;
+  background: #0d2010;
+  color: #4a8a3a;
+  border: 1px solid #2a5a1a;
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+.presencas-lista { padding: 4px 0; }
+.presencas-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 5px 12px;
+  border-bottom: 1px solid #1a1a10;
+  font-size: .78rem;
+}
+.presencas-item:last-child { border-bottom: none; }
+.presencas-dia  { color: #888; min-width: 70px; }
+.presencas-hora { color: #c8b84a; font-weight: 700; min-width: 45px; }
+.presencas-tipo { color: #555; font-size: .7rem; letter-spacing: .05em; }
+
+/* ── Tabela presenças professor ──────────────────────────── */
+.cal-presencas-tabela {
+  overflow-x: auto;
+  font-size: .78rem;
+}
+.cal-pres-hdr, .cal-pres-row {
+  display: grid;
+  grid-template-columns: 2fr repeat(6, 1fr) 1fr;
+  gap: 4px;
+  align-items: center;
+  padding: 6px 8px;
+  border-bottom: 1px solid #1a1a10;
+}
+.cal-pres-hdr {
+  font-size: .65rem;
+  font-weight: 700;
+  color: #555;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  background: #111109;
+  position: sticky;
+  top: 0;
+}
+.cal-pres-row:nth-child(even) { background: #0d0d09; }
+.cal-pres-nome {
+  color: #c8b84a;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cal-pres-val {
+  text-align: center;
+  color: #7ac85a;
+  font-weight: 700;
+}
+.cal-pres-zero { color: #333; }
+.cal-pres-total {
+  text-align: center;
+  font-weight: 800;
+  color: #c8b84a;
+  background: #1a1a0a;
+  border-radius: 2px;
+  padding: 2px 4px;
+}
