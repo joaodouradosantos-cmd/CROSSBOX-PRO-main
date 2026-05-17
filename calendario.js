@@ -104,6 +104,20 @@ async function bloquearAluno(tel) {
   await Promise.all(proms);
 }
 
+async function cancelarAula(id, cancelado) {
+  await updateDoc(doc(db,"aulas",id), { cancelada: cancelado });
+}
+
+async function cancelarDia(dt, cancelado) {
+  const snap = await getDocs(collection(db,"aulas"));
+  const proms = [];
+  snap.forEach(d => {
+    if (d.data().data === dt)
+      proms.push(updateDoc(doc(db,"aulas",d.id), { cancelada: cancelado }));
+  });
+  await Promise.all(proms);
+}
+
 async function gerarSemana(off) {
   const mon = getMonday(off);
   for (let i = 0; i < 7; i++) {
@@ -230,11 +244,17 @@ function renderGrid() {
     if (!(HORARIOS[dow]||[]).length) continue;
 
     const isHoje = dt === hoje;
-    html += `<div class="cal-dia${isHoje ? " cal-dia-hoje" : ""}">
+    // Verifica se todas as aulas do dia estão canceladas
+    const aulasDoDia = (HORARIOS[dow]||[]).map(h => aulasCache[aulaId(dt,h)]).filter(Boolean);
+    const diaCancelado = aulasDoDia.length > 0 && aulasDoDia.every(a => a.cancelada);
+
+    html += `<div class="cal-dia${isHoje ? " cal-dia-hoje" : ""}${diaCancelado ? " cal-dia-cancelado" : ""}">
       <div class="cal-dia-hdr">
         <span class="cal-dia-nome">${DIAS_PT[dow]}</span>
         <span class="cal-dia-data">${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}</span>
         ${isHoje ? `<span class="cal-hoje-pill">HOJE</span>` : ""}
+        ${diaCancelado ? `<span class="cal-cancelado-pill">CANCELADO</span>` : ""}
+        ${isProf ? `<button class="cal-btn-cancelar-dia ${diaCancelado?"cal-btn-reabrir-dia":""}" data-dt="${dt}" data-cancelado="${diaCancelado}">${diaCancelado ? "✅ REABRIR DIA" : "🚫 CANCELAR DIA"}</button>` : ""}
       </div>`;
 
     for (const hora of (HORARIOS[dow]||[])) {
@@ -242,15 +262,17 @@ function renderGrid() {
       const aula     = aulasCache[id];
       if (!aula) continue;
 
-      const inscritos = aula.inscritos||[];
-      const vagas     = aula.vagas||8;
-      const livres    = vagas - inscritos.length;
-      const inscrito  = session && inscritos.some(a => a.tel === session.tel);
-      const passado   = dt < hoje || (dt === hoje && hora < agora);
-      const cheia     = livres <= 0;
+      const inscritos  = aula.inscritos||[];
+      const vagas      = aula.vagas||8;
+      const livres     = vagas - inscritos.length;
+      const inscrito   = session && inscritos.some(a => a.tel === session.tel);
+      const passado    = dt < hoje || (dt === hoje && hora < agora);
+      const cheia      = livres <= 0;
+      const cancelada  = aula.cancelada === true;
 
       let aulaClass = "cal-aula";
-      if (inscrito) aulaClass += " cal-inscrito";
+      if (cancelada) aulaClass += " cal-cancelada";
+      else if (inscrito) aulaClass += " cal-inscrito";
       else if (cheia || passado) aulaClass += " cal-dim";
 
       let vagaClass = "cal-vg-ok";
@@ -277,6 +299,9 @@ function renderGrid() {
           <label>🕐 <input class="cal-inp-hora" type="time" data-id="${id}" data-dt="${dt}" data-oldhora="${hora}" value="${hora}"></label>
           <label>👥 <input class="cal-inp-v" type="number" data-id="${id}" value="${vagas}" min="1" max="30"></label>
           <select class="cal-sel-t" data-id="${id}">${TIPOS_AULA.map(t=>`<option${t===aula.tipo?" selected":""}>${t}</option>`).join("")}</select>
+          ${cancelada
+            ? `<button class="cal-btn-reabrir" data-id="${id}">✅ REABRIR</button>`
+            : `<button class="cal-btn-cancelar-aula" data-id="${id}">🚫 CANCELAR AULA</button>`}
         </div>`;
       }
 
@@ -308,6 +333,23 @@ function renderGrid() {
   grid.querySelectorAll(".cal-inp-v").forEach(inp =>
     inp.addEventListener("change", () =>
       updateDoc(doc(db,"aulas",inp.dataset.id),{vagas:parseInt(inp.value)||8})));
+  grid.querySelectorAll(".cal-btn-cancelar-aula").forEach(btn =>
+    btn.addEventListener("click", async () => {
+      if (!confirm("Cancelar esta aula? Os alunos inscritos serão notificados visualmente.")) return;
+      await cancelarAula(btn.dataset.id, true);
+    }));
+  grid.querySelectorAll(".cal-btn-reabrir").forEach(btn =>
+    btn.addEventListener("click", async () => {
+      await cancelarAula(btn.dataset.id, false);
+    }));
+  grid.querySelectorAll(".cal-btn-cancelar-dia").forEach(btn =>
+    btn.addEventListener("click", async () => {
+      const cancelado = btn.dataset.cancelado === "true";
+      const msg = cancelado ? "Reabrir todas as aulas deste dia?" : "Cancelar TODAS as aulas deste dia?";
+      if (!confirm(msg)) return;
+      btn.disabled = true;
+      await cancelarDia(btn.dataset.dt, !cancelado);
+    }));
   grid.querySelectorAll(".cal-inp-hora").forEach(inp =>
     inp.addEventListener("change", async () => {
       const novaHora = inp.value;
