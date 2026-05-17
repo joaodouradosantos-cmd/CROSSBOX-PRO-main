@@ -943,10 +943,10 @@ D)
     <span>BACKUP</span>
   </button>
 
-  <!-- RESERVAS → sec-reservas -->
+  <!-- PRESENÇAS → sec-reservas -->
   <button class="btn-secondary opt-btn" data-target="sec-reservas">
-    <span class="opt-emoji">📅</span>
-    <span>RESERVAS</span>
+    <span class="opt-emoji">📊</span>
+    <span>PRESENÇAS</span>
   </button>
 
   <button class="btn-secondary opt-btn" data-target="opt-historico">
@@ -1330,61 +1330,11 @@ D)
     <!-- RESERVAS & PRESENÇAS (AGORA DENTRO DO WOD & TOOLS) -->
     <section id="sec-reservas" class="option-section">
       <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">📆 Reservas & Presenças</h3>
-
-        <div class="form-row">
-          <div class="field">
-            <label>Data da aula</label>
-            <input id="reservaData" type="date" />
-          </div>
-          <div class="field">
-            <label>Hora</label>
-            <input id="reservaHora" type="time" />
-          </div>
+        <h3 style="margin-top:0; margin-bottom:4px;">📊 As Minhas Presenças</h3>
+        <p class="helper-text" style="margin-bottom:12px;">As tuas aulas marcadas no calendário da CrossFit Moita.</p>
+        <div id="presencas-wrap">
+          <div class="helper-text">A carregar... Abre primeiro o separador <strong>📅 Aulas</strong> para te identificares.</div>
         </div>
-
-        <div class="form-row">
-          <div class="field">
-            <label>Tipo de aula</label>
-            <select id="reservaTipo">
-              <option value="">Selecionar</option>
-              <option value="WOD">WOD</option>
-              <option value="Open Box">Open Box</option>
-              <option value="Halterofilismo">Halterofilismo</option>
-              <option value="Mobilidade">Mobilidade</option>
-              <option value="Competição">Competição</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label>Nota (opcional)</label>
-            <input id="reservaNota" type="text" placeholder="Ex.: parceiro, foco, objetivo do dia..." />
-          </div>
-        </div>
-
-        <button class="btn-primary" id="reservaAddBtn">Guardar reserva</button>
-
-        <div class="helper-text" style="margin-top:6px;">
-          Estas reservas e presenças são pessoais e ficam apenas guardadas neste dispositivo.
-        </div>
-
-        <div class="scroll" style="margin-top:10px;">
-          <table>
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Hora</th>
-                <th>Aula</th>
-                <th>Nota</th>
-                <th>Presença</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="reservasBody"></tbody>
-          </table>
-        </div>
-
-        <div class="helper-text" id="reservasResumo" style="margin-top:6px;"></div>
       </div>
     </section>
 
@@ -5360,7 +5310,16 @@ function exportQuadrosPdf() {
 
 
 <script type="module">
-  import { initCalendario } from "./calendario.js";
+  import { initCalendario, carregarPresencas } from "./calendario.js";
+
+  // Carregar presenças quando o botão Presenças for clicado
+  document.querySelectorAll('.opt-btn').forEach(btn => {
+    if (btn.dataset.target === 'sec-reservas') {
+      btn.addEventListener('click', () => {
+        setTimeout(carregarPresencas, 300);
+      });
+    }
+  });
 
   let calIniciado = false;
   function activateCalTab() {
