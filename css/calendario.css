@@ -608,3 +608,97 @@
   cursor: pointer;
 }
 .cal-inp-hora:focus { border-color: #c8b84a; outline: none; }
+
+/* ── Aula cancelada ──────────────────────────────────────────── */
+.cal-aula.cal-cancelada {
+  background: #1a0808;
+  border-color: #5a1a1a;
+  opacity: 0.7;
+  position: relative;
+}
+.cal-aula.cal-cancelada .cal-hora {
+  text-decoration: line-through;
+  color: #6a3a3a;
+}
+.cal-aula.cal-cancelada::before {
+  content: "🚫 CANCELADA";
+  display: block;
+  font-size: .65rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  color: #8a2a2a;
+  margin-bottom: 4px;
+}
+
+/* ── Dia cancelado ───────────────────────────────────────────── */
+.cal-dia.cal-dia-cancelado {
+  border-color: #5a1a1a;
+  opacity: 0.75;
+}
+.cal-dia.cal-dia-cancelado .cal-dia-nome {
+  color: #6a3a3a;
+  text-decoration: line-through;
+}
+.cal-cancelado-pill {
+  font-size: .6rem;
+  background: #3a0a0a;
+  color: #8a2a2a;
+  border: 1px solid #5a1a1a;
+  padding: 2px 6px;
+  border-radius: 2px;
+  letter-spacing: .1em;
+  font-weight: 800;
+}
+
+/* ── Botões cancelar / reabrir ───────────────────────────────── */
+.cal-btn-cancelar-aula {
+  padding: 4px 8px;
+  background: #1a0808;
+  border: 1px solid #5a1a1a;
+  color: #8a3a3a;
+  font-size: .68rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+  margin-left: auto;
+}
+.cal-btn-cancelar-aula:hover { border-color: #8a2a2a; color: #cc4a4a; }
+
+.cal-btn-reabrir {
+  padding: 4px 8px;
+  background: #0a1a08;
+  border: 1px solid #2a5a1a;
+  color: #4a8a3a;
+  font-size: .68rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+  margin-left: auto;
+}
+.cal-btn-reabrir:hover { border-color: #4a8a2a; color: #7acc4a; }
+
+.cal-btn-cancelar-dia {
+  margin-left: auto;
+  padding: 3px 8px;
+  background: #1a0808;
+  border: 1px solid #4a1a1a;
+  color: #7a3a3a;
+  font-size: .62rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+  white-space: nowrap;
+}
+.cal-btn-cancelar-dia:hover { border-color: #8a2a2a; color: #cc4a4a; }
+.cal-btn-reabrir-dia {
+  background: #0a1a08;
+  border-color: #2a5a1a;
+  color: #4a8a3a;
+}
+.cal-btn-reabrir-dia:hover { border-color: #4a8a2a; color: #7acc4a; }
