@@ -1340,16 +1340,55 @@ D)
 
   </section>
 
-</div>
-
   <!-- SECÇÃO 3: CALENDÁRIO DE AULAS -->
   <section id="sec-calendario" class="section">
     <div class="card">
-      <div id="cal-wrap">
-        <div style="text-align:center;padding:20px;color:#555;">A carregar calendário...</div>
+
+      <div class="options-grid">
+        <button class="btn-secondary opt-btn" data-cal-target="cal-sub-calendario">
+          <span class="opt-emoji">📅</span><span>CALENDÁRIO</span>
+        </button>
+        <button class="btn-secondary opt-btn cal-prof-only" data-cal-target="cal-sub-alunos" style="display:none;">
+          <span class="opt-emoji">👥</span><span>ALUNOS</span>
+        </button>
+        <button class="btn-secondary opt-btn cal-prof-only" data-cal-target="cal-sub-convites" style="display:none;">
+          <span class="opt-emoji">🔗</span><span>CONVITES</span>
+        </button>
+        <button class="btn-secondary opt-btn" data-cal-target="cal-sub-presencas">
+          <span class="opt-emoji">📊</span><span>PRESENÇAS</span>
+        </button>
       </div>
+
+      <section id="cal-sub-calendario" class="option-section active">
+        <div id="cal-wrap">
+          <div style="text-align:center;padding:20px;color:#888;">A carregar calendário...</div>
+        </div>
+      </section>
+
+      <section id="cal-sub-alunos" class="option-section">
+        <div id="cal-alunos-sub-wrap" style="padding:10px 0;">
+          <div class="helper-text">Entra como professor no Calendário para gerir alunos.</div>
+        </div>
+      </section>
+
+      <section id="cal-sub-convites" class="option-section">
+        <div id="cal-convites-sub-wrap" style="padding:10px 0;">
+          <div class="helper-text">Entra como professor no Calendário para gerir convites.</div>
+        </div>
+      </section>
+
+      <section id="cal-sub-presencas" class="option-section">
+        <h3 style="margin-top:12px;margin-bottom:4px;">📊 As Minhas Presenças</h3>
+        <p class="helper-text" style="margin-bottom:12px;">As tuas aulas marcadas no calendário da CrossFit Moita.</p>
+        <div id="presencas-wrap">
+          <div class="helper-text">Abre o <strong>Calendário</strong> e entra com os teus dados primeiro.</div>
+        </div>
+      </section>
+
     </div>
   </section>
+
+</div>
 
 <script>
 const STORAGE_PROFILE = "crossfit_profile";
@@ -5312,16 +5351,20 @@ function exportQuadrosPdf() {
 <script type="module">
   import { initCalendario, carregarPresencas } from "./calendario.js";
 
-  // Carregar presenças quando o botão Presenças for clicado
-  document.querySelectorAll('.opt-btn').forEach(btn => {
-    if (btn.dataset.target === 'sec-reservas') {
-      btn.addEventListener('click', () => {
-        setTimeout(carregarPresencas, 300);
-      });
-    }
+  let calIniciado = false;
+
+  // ── Navegação interna do Calendário (igual ao WOD & Tools) ──
+  document.querySelectorAll('[data-cal-target]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.calTarget;
+      document.querySelectorAll('#sec-calendario .option-section').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(targetId);
+      if (target) target.classList.add('active');
+      if (targetId === 'cal-sub-presencas') setTimeout(carregarPresencas, 200);
+    });
   });
 
-  let calIniciado = false;
+  // ── Ativar tab Aulas ─────────────────────────────────────────
   function activateCalTab() {
     if (!calIniciado) {
       calIniciado = true;
@@ -5329,23 +5372,20 @@ function exportQuadrosPdf() {
     }
   }
 
-  // Hook into tab buttons AFTER DOM ready
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      if (btn.dataset.target === 'sec-calendario') {
-        btn.addEventListener('click', activateCalTab);
-      }
-    });
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    if (btn.dataset.target === 'sec-calendario') btn.addEventListener('click', activateCalTab);
   });
 
-  // Also observe if section becomes active (in case tab logic runs first)
-  const obs = new MutationObserver(() => {
-    const sec = document.getElementById('sec-calendario');
-    if (sec && sec.classList.contains('active') && !calIniciado) {
-      activateCalTab();
-    }
+  // Botão Presenças no WOD & Tools
+  document.querySelectorAll('.opt-btn').forEach(btn => {
+    if (btn.dataset.target === 'sec-reservas') btn.addEventListener('click', () => setTimeout(carregarPresencas, 200));
   });
-  obs.observe(document.body, { subtree: true, attributeFilter: ['class'] });
+
+  // Observer fallback
+  new MutationObserver(() => {
+    const sec = document.getElementById('sec-calendario');
+    if (sec && sec.classList.contains('active') && !calIniciado) activateCalTab();
+  }).observe(document.body, { subtree: true, attributeFilter: ['class'] });
 </script>
 </body>
 </html>
