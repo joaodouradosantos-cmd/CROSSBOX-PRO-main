@@ -922,40 +922,36 @@ function renderCalendario() {
 }
 
 function setupProfBtns() {
-  // Alunos
-  const btnAlunos = document.querySelector('[data-cal-target="cal-sec-alunos"]');
-  if (btnAlunos) {
-    btnAlunos.addEventListener("click", () => {
-      const div = document.getElementById("presencas-prof-wrap");
-      if (div && div.innerHTML.includes("Entra como professor")) renderAlunos2();
+  // Alunos — usa IDs do HTML actual
+  document.querySelector('[data-cal-target="cal-sub-alunos"]')
+    ?.addEventListener("click", () => {
+      const div = document.getElementById("cal-alunos-sub-wrap");
+      if (div) renderAlunosExt(div);
     });
-  }
 
   // Convites
-  const btnConv = document.querySelector('[data-cal-target="cal-sec-convites"]');
-  if (btnConv) {
-    btnConv.addEventListener("click", () => {
-      const div = document.getElementById("convites-wrap");
-      if (div) renderConvites2();
+  document.querySelector('[data-cal-target="cal-sub-convites"]')
+    ?.addEventListener("click", () => {
+      const div = document.getElementById("cal-convites-sub-wrap");
+      if (div) renderConvitesExt(div);
     });
-  }
 
-  // Presenças professor
-  const btnPres = document.querySelector('[data-cal-target="cal-sec-presencas"]');
-  if (btnPres) {
-    btnPres.addEventListener("click", () => {
-      renderPresencasProfessor2();
+  // Presenças (professor vê tabela por aluno)
+  document.querySelector('[data-cal-target="cal-sub-presencas"]')
+    ?.addEventListener("click", () => {
+      const div = document.getElementById("presencas-wrap");
+      if (div && session?.tipo === "prof") renderPresencasProfessor();
     });
-  }
 }
 
-async function renderAlunos2() {
-  const div = document.getElementById("presencas-prof-wrap");
-  if (!div) return;
+export async function renderAlunosPublic(div) { return renderAlunosExt(div); }
+export function renderConvitesPublic(div) { return renderConvitesExt(div); }
+
+async function renderAlunosExt(div) {
   div.innerHTML = `<div class="cal-loading">A carregar...</div>`;
   const snap = await getDocs(collection(db,"alunos"));
   if (snap.empty) { div.innerHTML="<em>Nenhum aluno registado.</em>"; return; }
-  let html = `<div class="cal-alunos-count">${snap.size} aluno(s) registado(s)</div>`;
+  let html = `<div class="cal-alunos-count">${snap.size} aluno(s)</div>`;
   snap.forEach(d => {
     const a = d.data();
     html += `<div class="cal-aluno-row${a.bloqueado?" cal-row-bloq":""}">
@@ -968,81 +964,35 @@ async function renderAlunos2() {
   div.innerHTML = html;
   div.querySelectorAll(".cal-btn-bloquear").forEach(btn =>
     btn.addEventListener("click", async () => {
-      if (!confirm(`Remover ${btn.dataset.nome}?
-Não poderá entrar na app.`)) return;
-      btn.disabled=true; await bloquearAluno(btn.dataset.tel); await renderAlunos2();
+      if (!confirm(`Remover ${btn.dataset.nome}?\nNão poderá entrar na app.`)) return;
+      btn.disabled = true;
+      await bloquearAluno(btn.dataset.tel);
+      await renderAlunosExt(div);
     }));
   div.querySelectorAll(".cal-btn-reativar").forEach(btn =>
     btn.addEventListener("click", async () => {
-      await updateDoc(doc(db,"alunos",btn.dataset.tel),{bloqueado:false}); await renderAlunos2();
+      await updateDoc(doc(db,"alunos",btn.dataset.tel),{bloqueado:false});
+      await renderAlunosExt(div);
     }));
 }
 
-function renderConvites2() {
-  const div = document.getElementById("convites-wrap");
-  if (!div) return;
+function renderConvitesExt(div) {
   div.innerHTML = `
-    <button class="cal-btn-principal" id="cal-novo-conv2">🔗 GERAR CONVITE</button>
-    <div id="cal-conv-result2"></div>`;
-  document.getElementById("cal-novo-conv2").addEventListener("click", async () => {
-    const btn = document.getElementById("cal-novo-conv2");
-    btn.disabled=true; btn.textContent="A gerar...";
+    <p class="helper-text">Gera um código único para partilhar com o novo aluno. O código só funciona uma vez.</p>
+    <button class="btn-primary" id="ext-novo-conv">🔗 Gerar Convite</button>
+    <div id="ext-conv-result" style="margin-top:12px;"></div>`;
+  document.getElementById("ext-novo-conv").addEventListener("click", async () => {
+    const btn = document.getElementById("ext-novo-conv");
+    btn.disabled = true; btn.textContent = "A gerar...";
     const c = await criarConvite();
-    document.getElementById("cal-conv-result2").innerHTML=`
+    document.getElementById("ext-conv-result").innerHTML = `
       <div class="cal-conv-box">
         <div class="cal-conv-code">${c}</div>
-        <p class="cal-helper">Envia este código ao aluno. Na app, ele clica em "Tenho um código de convite".</p>
-        <button class="cal-btn-secundario" onclick="navigator.clipboard.writeText('${c}');this.textContent='✅ Copiado!'">📋 COPIAR CÓDIGO</button>
+        <p class="helper-text">Envia este código ao aluno. Na app, ele clica em "Tenho um código de convite".</p>
+        <button class="btn-secondary" onclick="navigator.clipboard.writeText('${c}');this.textContent='✅ Copiado!'">📋 Copiar código</button>
       </div>`;
-    btn.disabled=false; btn.textContent="🔗 GERAR NOVO CONVITE";
+    btn.disabled = false; btn.textContent = "🔗 Gerar Novo Convite";
   });
-}
-
-async function renderPresencasProfessor2() {
-  const div = document.getElementById("presencas-wrap");
-  if (!div) return;
-  // Se for professor mostra tabela de todos os alunos
-  if (session?.tipo === "prof") {
-    await renderPresencasProfessor_inner(div);
-  }
-}
-
-function atualizarSemana() {
-  const lbl = document.getElementById("cal-semana-lbl");
-  if (lbl) lbl.textContent = semanaLabel(semanaOff);
-  escutarSemana(semanaOff);
-}
-
-// ─── ENTRAR NA APP (após autenticação) ───────────────────────
-async function entrarNaApp() {
-  // Se for aluno e não tiver PIN nem biometria, sugerir configurar
-  const pin    = getPin();
-  const temBio = session.tipo !== "prof" && temBiometriaRegistada(session.tel);
-
-  if (session.tipo === "aluno" && !pin && !temBio) {
-    // Primeira entrada — sugerir segurança
-    const wrap = document.getElementById("cal-wrap");
-    wrap.innerHTML = `
-      <div class="cal-login-box">
-        <img src="./imagens/logo.png" class="cal-login-logo" alt="CrossFit Moita"/>
-        <div class="cal-login-title">PROTEGE O TEU ACESSO</div>
-        <div class="cal-login-sub">OPCIONAL MAS RECOMENDADO</div>
-        <p class="cal-helper" style="text-align:center;">Define um PIN ou usa a impressão digital para entrar mais rápido nas próximas vezes.</p>
-        <button class="cal-btn-principal" id="cal-config-seg">🔐 CONFIGURAR AGORA</button>
-        <button class="cal-btn-secundario" id="cal-skip-seg" style="margin-top:8px;">Saltar por agora</button>
-      </div>`;
-    document.getElementById("cal-config-seg").addEventListener("click", () => {
-      renderConfigurarSeguranca();
-      // Após fechar modal, ir para calendário
-      const obs = new MutationObserver(() => {
-        if (!document.querySelector(".cal-modal-overlay")) { obs.disconnect(); renderCalendario(); }
-      });
-      obs.observe(document.body, { childList: true });
-    });
-    document.getElementById("cal-skip-seg").addEventListener("click", renderCalendario);
-  } else {
-    renderCalendario();
-  }
 }
 
 
