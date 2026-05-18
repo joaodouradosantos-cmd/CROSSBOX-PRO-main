@@ -349,12 +349,22 @@ function escutarSemana(off) {
       });
       renderGrid();
     } catch(e) {
+      console.error("Erro ao carregar aulas:", e);
       const g = document.getElementById("cal-grid");
-      if (g) g.innerHTML = `<div class="cal-erro">⚠️ Erro: ${e.message}</div>`;
+      if (g) g.innerHTML = `
+        <div class="cal-erro">
+          ⚠️ Erro ao carregar aulas.<br>
+          <small>${e.message}</small><br>
+          <button onclick="location.reload()" style="margin-top:10px;padding:6px 12px;background:#c8b84a;border:none;border-radius:3px;font-weight:700;cursor:pointer;">🔄 Tentar de novo</button>
+        </div>`;
     }
   }
+
+  // Primeira carga com indicador
+  const g = document.getElementById("cal-grid");
+  if (g) g.innerHTML = '<div class="cal-loading">🔄 A carregar aulas...</div>';
   carregar();
-  poolIntv = setInterval(carregar, 15000);
+  poolIntv = setInterval(carregar, 20000);
 }
 
 // ─── RENDER GRID ─────────────────────────────────────────────
@@ -853,10 +863,16 @@ function renderCalendario() {
   const wrap   = document.getElementById("cal-wrap");
   const isProf = session?.tipo === "prof";
 
+  // Mostrar/esconder botões de professor na barra de tabs do calendário
+  document.querySelectorAll(".cal-prof-only").forEach(el => {
+    el.style.display = isProf ? "flex" : "none";
+  });
+
+  // Renderizar conteúdo principal na div cal-wrap
   wrap.innerHTML = `
     <div class="cal-toolbar">
       <div class="cal-topbar">
-        <span class="cal-user-pill">${isProf?"🏋️ PROFESSOR":`👤 ${session.nome.split(" ")[0].toUpperCase()}`}</span>
+        <span class="cal-user-pill">${isProf ? "🏋️ PROFESSOR" : `👤 ${session.nome.split(" ")[0].toUpperCase()}`}</span>
         <div style="display:flex;gap:6px;align-items:center;">
           ${!isProf ? `<button class="cal-btn-icon" id="cal-seguranca" title="Segurança">🔐</button>` : ""}
           <button class="cal-btn-sair" id="cal-sair">SAIR</button>
@@ -867,37 +883,19 @@ function renderCalendario() {
         <span class="cal-semana-label" id="cal-semana-lbl">${semanaLabel(semanaOff)}</span>
         <button class="cal-nav-btn" id="cal-next">▶</button>
       </div>
-      ${isProf?`
-      <div class="cal-prof-tools">
+      ${isProf ? `<div class="cal-prof-tools">
         <button class="cal-btn-gerar" id="cal-gerar">⚙️ GERAR AULAS</button>
-        <button class="cal-btn-tool" id="cal-tab-alunos">👥 ALUNOS</button>
-        <button class="cal-btn-tool" id="cal-tab-conv">🔗 CONVITES</button>
-        <button class="cal-btn-tool" id="cal-tab-presencas">📊 PRESENÇAS</button>
-      </div>
-      <div id="cal-debug" style="font-size:.7rem;color:#555;margin-top:4px;"></div>`:""}
+      </div>` : ""}
     </div>
-
     <div id="cal-grid" class="cal-grid"><div class="cal-loading">🔄 A carregar...</div></div>
-
-    ${isProf?`
-    <div id="cal-painel-alunos" class="cal-painel" style="display:none;">
-      <div class="cal-painel-titulo">👥 GESTÃO DE ALUNOS</div>
-      <p class="cal-helper">Alunos bloqueados não conseguem entrar na app.</p>
-      <div id="cal-alunos-div"></div>
-    </div>
-    <div id="cal-painel-conv" class="cal-painel" style="display:none;">
-      <div class="cal-painel-titulo">🔗 CONVITES</div>
-      <div id="cal-convites-div"></div>
-    </div>
-    <div id="cal-painel-presencas" class="cal-painel" style="display:none;">
-      <div class="cal-painel-titulo">📊 PRESENÇAS POR ALUNO</div>
-      <p class="cal-helper">Contagem de aulas por aluno nos últimos 6 meses. Inscrito = presente.</p>
-      <div id="cal-presencas-div"></div>
-    </div>`:""}
   `;
 
   document.getElementById("cal-sair").addEventListener("click", () => {
-    saveSession(null); if(poolIntv) clearInterval(poolIntv); renderLogin();
+    saveSession(null);
+    if (poolIntv) clearInterval(poolIntv);
+    // Esconder botões de professor
+    document.querySelectorAll(".cal-prof-only").forEach(el => el.style.display = "none");
+    renderLogin();
   });
   document.getElementById("cal-prev").addEventListener("click", () => { semanaOff--; atualizarSemana(); });
   document.getElementById("cal-next").addEventListener("click", () => { semanaOff++; atualizarSemana(); });
@@ -913,31 +911,100 @@ function renderCalendario() {
       setTimeout(()=>{btn.disabled=false;btn.textContent="⚙️ GERAR AULAS";},2000);
     });
 
-    let painelAtivo = null;
-    const togglePainel = (id, renderFn) => {
-      const p = document.getElementById(id);
-      const dbg = document.getElementById("cal-debug");
-      if (!p) { if(dbg) dbg.textContent="ERRO: "+id+" não encontrado"; return; }
-      if (painelAtivo === id) {
-        p.style.display="none"; painelAtivo=null; if(dbg) dbg.textContent="";
-      } else {
-        document.querySelectorAll(".cal-painel").forEach(x=>x.style.display="none");
-        p.style.display="block"; p.scrollIntoView({behavior:"smooth",block:"start"});
-        painelAtivo=id; if(dbg) dbg.textContent="";
-        if (renderFn) renderFn();
-      }
-    };
-    document.getElementById("cal-tab-alunos").addEventListener("click", ()=>togglePainel("cal-painel-alunos",renderAlunos));
-    document.getElementById("cal-tab-conv").addEventListener("click",   ()=>togglePainel("cal-painel-conv",renderConvites));
-    document.getElementById("cal-tab-presencas").addEventListener("click", ()=>togglePainel("cal-painel-presencas",renderPresencasProfessor));
+    // Ligar botões Alunos, Convites e Presenças às suas divs
+    setupProfBtns();
   }
 
-  // Pedir permissão notificações
+  atualizarBotoesProf();
   pedirPermissaoNotif();
-  // Verificar aulas canceladas
   verificarAulasCanceladas();
-
   atualizarSemana();
+}
+
+function setupProfBtns() {
+  // Alunos
+  const btnAlunos = document.querySelector('[data-cal-target="cal-sec-alunos"]');
+  if (btnAlunos) {
+    btnAlunos.addEventListener("click", () => {
+      const div = document.getElementById("presencas-prof-wrap");
+      if (div && div.innerHTML.includes("Entra como professor")) renderAlunos2();
+    });
+  }
+
+  // Convites
+  const btnConv = document.querySelector('[data-cal-target="cal-sec-convites"]');
+  if (btnConv) {
+    btnConv.addEventListener("click", () => {
+      const div = document.getElementById("convites-wrap");
+      if (div) renderConvites2();
+    });
+  }
+
+  // Presenças professor
+  const btnPres = document.querySelector('[data-cal-target="cal-sec-presencas"]');
+  if (btnPres) {
+    btnPres.addEventListener("click", () => {
+      renderPresencasProfessor2();
+    });
+  }
+}
+
+async function renderAlunos2() {
+  const div = document.getElementById("presencas-prof-wrap");
+  if (!div) return;
+  div.innerHTML = `<div class="cal-loading">A carregar...</div>`;
+  const snap = await getDocs(collection(db,"alunos"));
+  if (snap.empty) { div.innerHTML="<em>Nenhum aluno registado.</em>"; return; }
+  let html = `<div class="cal-alunos-count">${snap.size} aluno(s) registado(s)</div>`;
+  snap.forEach(d => {
+    const a = d.data();
+    html += `<div class="cal-aluno-row${a.bloqueado?" cal-row-bloq":""}">
+      <div><strong>${a.nome}</strong> <small>${a.tel}</small>${a.bloqueado?` <span class="cal-pill-bloq">BLOQUEADO</span>`:""}</div>
+      ${a.bloqueado
+        ? `<button class="cal-btn-reativar" data-tel="${a.tel}">✅ Reativar</button>`
+        : `<button class="cal-btn-bloquear" data-tel="${a.tel}" data-nome="${a.nome}">🚫 Remover</button>`}
+    </div>`;
+  });
+  div.innerHTML = html;
+  div.querySelectorAll(".cal-btn-bloquear").forEach(btn =>
+    btn.addEventListener("click", async () => {
+      if (!confirm(`Remover ${btn.dataset.nome}?
+Não poderá entrar na app.`)) return;
+      btn.disabled=true; await bloquearAluno(btn.dataset.tel); await renderAlunos2();
+    }));
+  div.querySelectorAll(".cal-btn-reativar").forEach(btn =>
+    btn.addEventListener("click", async () => {
+      await updateDoc(doc(db,"alunos",btn.dataset.tel),{bloqueado:false}); await renderAlunos2();
+    }));
+}
+
+function renderConvites2() {
+  const div = document.getElementById("convites-wrap");
+  if (!div) return;
+  div.innerHTML = `
+    <button class="cal-btn-principal" id="cal-novo-conv2">🔗 GERAR CONVITE</button>
+    <div id="cal-conv-result2"></div>`;
+  document.getElementById("cal-novo-conv2").addEventListener("click", async () => {
+    const btn = document.getElementById("cal-novo-conv2");
+    btn.disabled=true; btn.textContent="A gerar...";
+    const c = await criarConvite();
+    document.getElementById("cal-conv-result2").innerHTML=`
+      <div class="cal-conv-box">
+        <div class="cal-conv-code">${c}</div>
+        <p class="cal-helper">Envia este código ao aluno. Na app, ele clica em "Tenho um código de convite".</p>
+        <button class="cal-btn-secundario" onclick="navigator.clipboard.writeText('${c}');this.textContent='✅ Copiado!'">📋 COPIAR CÓDIGO</button>
+      </div>`;
+    btn.disabled=false; btn.textContent="🔗 GERAR NOVO CONVITE";
+  });
+}
+
+async function renderPresencasProfessor2() {
+  const div = document.getElementById("presencas-wrap");
+  if (!div) return;
+  // Se for professor mostra tabela de todos os alunos
+  if (session?.tipo === "prof") {
+    await renderPresencasProfessor_inner(div);
+  }
 }
 
 function atualizarSemana() {
@@ -979,7 +1046,7 @@ async function entrarNaApp() {
 }
 
 
-// ─── PRESENÇAS DO ALUNO (secção WOD & Tools) ─────────────────
+// ─── PRESENÇAS DO ALUNO (secção Calendário → Presenças) ──────
 export async function carregarPresencas() {
   const wrap = document.getElementById("presencas-wrap");
   if (!wrap) return;
@@ -988,8 +1055,14 @@ export async function carregarPresencas() {
   let s = null;
   try { s = JSON.parse(localStorage.getItem("crossbox_cal_session")); } catch {}
 
-  if (!s || s.tipo === "prof") {
-    wrap.innerHTML = `<div class="helper-text">Abre o separador <strong>📅 Aulas</strong> e entra com os teus dados para ver as tuas presenças.</div>`;
+  // Professor vê tabela de todos os alunos
+  if (s && s.tipo === "prof") {
+    await renderPresencasProfessor_inner(wrap);
+    return;
+  }
+
+  if (!s) {
+    wrap.innerHTML = `<div class="helper-text">Abre o <strong>Calendário</strong> e entra com os teus dados para ver as tuas presenças.</div>`;
     return;
   }
 
@@ -1080,6 +1153,56 @@ export async function carregarPresencas() {
   }
 }
 
+// ─── PRESENÇAS PROFESSOR (função interna partilhada) ─────────
+async function renderPresencasProfessor_inner(div) {
+  div.innerHTML = `<div class="cal-loading">A carregar...</div>`;
+  const hojeStr  = new Date().toISOString().slice(0,10);
+  const agoraStr = new Date().toTimeString().slice(0,5);
+  const mesesStr = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+  try {
+    const alunosSnap = await getDocs(collection(db,"alunos"));
+    const alunos = [];
+    alunosSnap.forEach(d => { if (!d.data().bloqueado) alunos.push(d.data()); });
+    const aulasSnap = await getDocs(collection(db,"aulas"));
+    const aulasPassadas = [];
+    aulasSnap.forEach(d => {
+      const a = d.data();
+      const passou = a.data < hojeStr || (a.data === hojeStr && a.hora < agoraStr);
+      if (passou && !a.cancelada) aulasPassadas.push(a);
+    });
+    if (!alunos.length) { div.innerHTML="<em>Nenhum aluno registado.</em>"; return; }
+    const meses = [];
+    for (let i = 0; i < 6; i++) {
+      const d = new Date(); d.setMonth(d.getMonth()-i);
+      meses.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`);
+    }
+    const stats = alunos.map(aluno => {
+      const porMes = {};
+      aulasPassadas.forEach(a => {
+        if ((a.inscritos||[]).some(x => x.tel === aluno.tel)) {
+          const mes = a.data.slice(0,7);
+          porMes[mes] = (porMes[mes]||0) + 1;
+        }
+      });
+      const total = Object.values(porMes).reduce((s,v)=>s+v,0);
+      return { ...aluno, porMes, total };
+    }).sort((a,b) => b.total - a.total);
+    let html = `<div class="cal-presencas-tabela">
+      <div class="cal-pres-hdr">
+        <span>ALUNO</span>
+        ${meses.map(m => `<span>${mesesStr[parseInt(m.slice(5))-1]}</span>`).join("")}
+        <span>TOTAL</span>
+      </div>
+      ${stats.map(a => `<div class="cal-pres-row">
+        <span class="cal-pres-nome">${a.nome}</span>
+        ${meses.map(m => `<span class="cal-pres-val ${(a.porMes[m]||0)===0?"cal-pres-zero":""}">${a.porMes[m]||0}</span>`).join("")}
+        <span class="cal-pres-total">${a.total}</span>
+      </div>`).join("")}
+    </div>`;
+    div.innerHTML = html;
+  } catch(e) { div.innerHTML = `<div class="cal-erro">Erro: ${e.message}</div>`; }
+}
+
 // ─── PRESENÇAS POR ALUNO (painel professor) ───────────────────
 async function renderPresencasProfessor() {
   const div = document.getElementById("cal-presencas-div");
@@ -1150,11 +1273,21 @@ async function renderPresencasProfessor() {
 }
 
 // ─── INIT ────────────────────────────────────────────────────
+// Mostrar/esconder botões de professor na navegação
+function atualizarBotoesProf() {
+  const isProf = session?.tipo === "prof";
+  document.querySelectorAll(".cal-prof-only").forEach(btn => {
+    btn.style.display = isProf ? "" : "none";
+  });
+}
+
 export function initCalendario() {
   try {
     const s = localStorage.getItem(STORAGE_SESSION);
     if (s) session = JSON.parse(s);
   } catch {}
+
+  atualizarBotoesProf();
 
   if (session) {
     const pin    = getPin();
