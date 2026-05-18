@@ -5357,10 +5357,25 @@ function exportQuadrosPdf() {
   document.querySelectorAll('[data-cal-target]').forEach(btn => {
     btn.addEventListener('click', () => {
       const targetId = btn.dataset.calTarget;
+
+      // Fechar todas as sub-secções
       document.querySelectorAll('#sec-calendario .option-section').forEach(s => s.classList.remove('active'));
+
+      // Abrir a seleccionada
       const target = document.getElementById(targetId);
       if (target) target.classList.add('active');
+
+      // Carregar conteúdo conforme o botão
       if (targetId === 'cal-sub-presencas') setTimeout(carregarPresencas, 200);
+
+      if (targetId === 'cal-sub-alunos') {
+        const div = document.getElementById("cal-alunos-sub-wrap");
+        if (div) import("./calendario.js").then(m => m.renderAlunosPublic && m.renderAlunosPublic(div));
+      }
+      if (targetId === 'cal-sub-convites') {
+        const div = document.getElementById("cal-convites-sub-wrap");
+        if (div) import("./calendario.js").then(m => m.renderConvitesPublic && m.renderConvitesPublic(div));
+      }
     });
   });
 
