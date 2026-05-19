@@ -1,12 +1,11 @@
-// service-worker.js – CrossBox (robusto, evita ecrã branco no 1º arranque)
-const CACHE_NAME = "crossbox-cache-v6-fixprint-wodui";
+// service-worker.js – CrossBox PRO
+const CACHE_NAME = "crossbox-cache-v10-benchmarks-calendarfix";
 
-// Só ficheiros locais (nada de CDNs) para não falhar a instalação
 const APP_SHELL = [
   "./",
-  "./index.html",
-  "./app.js",
-  "./manifest.json",
+  "./index.html?v=10",
+  "./manifest.json?v=10",
+  "./calendario.js?v=10",
   "./imagens/crossbox_logo.png",
   "./imagens/crossbox_logo-192.png",
   "./imagens/crossbox_logo-512.png",
@@ -14,7 +13,6 @@ const APP_SHELL = [
   "./css/fonts.css",
   "./fonts/stardos-stencil-regular.woff2",
   "./fonts/stardos-stencil-700.woff2"
-
 ];
 
 self.addEventListener("install", (event) => {
@@ -36,11 +34,10 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const req = event.request;
 
-  // Navegação (HTML): network-first para evitar branco quando o cache ainda não está pronto
   if (req.mode === "navigate") {
     event.respondWith((async () => {
       try {
-        const fresh = await fetch(req);
+        const fresh = await fetch(req, { cache: "no-store" });
         const cache = await caches.open(CACHE_NAME);
         cache.put("./index.html", fresh.clone());
         return fresh;
@@ -52,7 +49,6 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Restante: cache-first
   event.respondWith((async () => {
     const cached = await caches.match(req);
     if (cached) return cached;
