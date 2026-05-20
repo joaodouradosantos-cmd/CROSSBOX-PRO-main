@@ -49,7 +49,12 @@ let cache     = {};
 let poolIntv  = null;
 
 // ─── UTILS ───────────────────────────────────────────────────
-const isoDate = d => d.toISOString().slice(0,10);
+const isoDate = d => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
 const aulaId  = (dt,h) => `${dt}_${h.replace(":","h")}`;
 
 function getMonday(off=0) {
