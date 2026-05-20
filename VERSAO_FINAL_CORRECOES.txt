@@ -1,0 +1,17 @@
+VERSÃO FINAL CROSSBOX PRO
+
+1. Janelas Calendário/Presenças em verde militar.
+2. Removido fundo branco.
+3. Painéis configurados para abrir abaixo dos submenus.
+4. Botão Presenças escondido na secção WOD & Tools.
+5. Strict Press substituído por Shoulder Press.
+6. Mantidos os dados e registos existentes.
+7. WODs benchmark preservados:
+- Randy
+- Jackie
+- Murph
+- Fran
+- Isabel
+- 400 m corrida
+- Milha
+- 5 km corrida

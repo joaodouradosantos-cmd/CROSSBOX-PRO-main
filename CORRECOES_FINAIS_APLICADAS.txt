@@ -1,0 +1,6 @@
+Correções finais aplicadas:
+1. Aulas/Calendário/Presenças com fundo verde militar, sem janelas brancas.
+2. Conteúdo do calendário/presenças abre por baixo dos submenus.
+3. Botão Reservas removido da WOD & Tools, preservando secção/código/dados.
+4. Lista de exercícios do 1RM ordenada alfabeticamente em inglês.
+5. localStorage e dados dos alunos não foram apagados nem reinicializados.
