@@ -1204,3 +1204,53 @@ body{
 #sec-opcoes .opt-btn[data-target="sec-reservas"] {
   display: none !important;
 }
+/* FIX FINAL — AULAS ABREM PARA BAIXO */
+#sec-calendario {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+#sec-calendario > .card {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  background: linear-gradient(180deg, #314825 0%, #172112 60%, #0c110a 100%) !important;
+}
+
+#cal-nav-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  width: 100% !important;
+  margin-bottom: 12px !important;
+}
+
+#sec-calendario .option-section {
+  display: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  clear: both !important;
+  float: none !important;
+  position: relative !important;
+  left: 0 !important;
+  right: auto !important;
+  top: auto !important;
+  margin-top: 10px !important;
+  box-sizing: border-box !important;
+  background: linear-gradient(180deg, #2a3f1f 0%, #142010 100%) !important;
+}
+
+#sec-calendario .option-section.active {
+  display: block !important;
+}
+
+#cal-wrap,
+#presencas-wrap,
+#cal-alunos-wrap,
+#cal-convites-wrap {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  background: transparent !important;
+}
