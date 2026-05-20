@@ -345,7 +345,7 @@ function renderGrid() {
     let resumoBadge="";
     if(diaCancelado) resumoBadge=`<span class="cal-dia-badge cal-dia-badge-cancel">CANCELADO</span>`;
     else if(inscritoNesteDia) resumoBadge=`<span class="cal-dia-badge cal-dia-badge-inscrito">✔ INSCRITO</span>`;
-    else if(aulasComVaga>0) resumoBadge=`<span class="cal-dia-badge cal-dia-badge-vaga">${aulasComVaga} VAGA${aulasComVaga>1?"S":""}</span>`;
+    else if(aulasComVaga>0) resumoBadge=`<span class="cal-dia-badge cal-dia-badge-vaga">${aulasComVaga} AULA${aulasComVaga>1?"S":""}</span>`;
     else resumoBadge=`<span class="cal-dia-badge cal-dia-badge-cheio">ESGOTADO</span>`;
 
     html+=`<div class="cal-dia${isHoje?" cal-dia-hoje":""}${diaCancelado?" cal-dia-cancelado":""}">
