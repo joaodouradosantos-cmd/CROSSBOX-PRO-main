@@ -8,7 +8,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getFirestore, collection, doc, getDocs, getDoc,
-  setDoc, updateDoc, serverTimestamp
+  setDoc, updateDoc, serverTimestamp, onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -47,6 +47,7 @@ let session   = null;
 let semanaOff = 0;
 let cache     = {};
 let poolIntv  = null;
+let unsubscribeAulas = null;
 
 // ─── UTILS ───────────────────────────────────────────────────
 const isoDate = d => {
@@ -255,27 +256,49 @@ async function profInscrever(id,nome,tel) {
 
 // ─── CARREGAR AULAS ──────────────────────────────────────────
 function escutarSemana(off) {
-  if (poolIntv) clearInterval(poolIntv);
-  cache = {};
-  const mon=getMonday(off), sun=new Date(mon);
-  sun.setDate(mon.getDate()+6);
-  const ini=isoDate(mon), fim=isoDate(sun);
-
-  async function carregar() {
-    try {
-      const snap=await getDocs(collection(db,"aulas"));
-      cache={};
-      snap.forEach(d=>{const a=d.data();if(a.data>=ini&&a.data<=fim)cache[d.id]=a;});
-      renderGrid();
-    } catch(e) {
-      const g=document.getElementById("cal-grid");
-      if(g) g.innerHTML=`<div class="cal-erro">⚠️ ${e.message} <button onclick="location.reload()" style="margin-left:8px;padding:4px 10px;background:#c8b84a;border:none;border-radius:3px;cursor:pointer;font-weight:700;">🔄 Recarregar</button></div>`;
-    }
+  if (poolIntv) {
+    clearInterval(poolIntv);
+    poolIntv = null;
   }
-  const g=document.getElementById("cal-grid");
-  if(g) g.innerHTML='<div class="cal-loading">🔄 A carregar aulas...</div>';
-  carregar();
-  poolIntv=setInterval(carregar,20000);
+
+  if (unsubscribeAulas) {
+    unsubscribeAulas();
+    unsubscribeAulas = null;
+  }
+
+  cache = {};
+
+  const mon = getMonday(off);
+  const sun = new Date(mon);
+  sun.setDate(mon.getDate() + 6);
+
+  const ini = isoDate(mon);
+  const fim = isoDate(sun);
+
+  const g = document.getElementById("cal-grid");
+  if (g) {
+    g.innerHTML = '<div class="cal-loading">🔄 A carregar aulas...</div>';
+  }
+
+  unsubscribeAulas = onSnapshot(
+    collection(db, "aulas"),
+    snap => {
+      cache = {};
+      snap.forEach(d => {
+        const a = d.data();
+        if (a.data >= ini && a.data <= fim) {
+          cache[d.id] = a;
+        }
+      });
+      renderGrid();
+    },
+    e => {
+      const grid = document.getElementById("cal-grid");
+      if (grid) {
+        grid.innerHTML = `<div class="cal-erro">⚠️ ${e.message} <button onclick="location.reload()" style="margin-left:8px;padding:4px 10px;background:#c8b84a;border:none;border-radius:3px;cursor:pointer;font-weight:700;">🔄 Recarregar</button></div>`;
+      }
+    }
+  );
 }
 
 // ─── RENDER GRID ─────────────────────────────────────────────
@@ -573,8 +596,16 @@ function renderCalendario() {
     </div>
     <div id="cal-grid" class="cal-grid"><div class="cal-loading">🔄 A carregar...</div></div>`;
 
-  document.getElementById("cal-sair").addEventListener("click",()=>{
-    saveSession(null);if(poolIntv)clearInterval(poolIntv);
+document.getElementById("cal-sair").addEventListener("click",()=>{
+  saveSession(null);
+
+  if (poolIntv) clearInterval(poolIntv);
+
+  if (unsubscribeAulas) {
+    unsubscribeAulas();
+    unsubscribeAulas = null;
+  }
+});
     atualizarBotoesProf();renderLogin();
   });
   document.getElementById("cal-prev").addEventListener("click",()=>{semanaOff--;atualizarSemana();});
