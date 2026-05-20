@@ -599,15 +599,19 @@ function renderCalendario() {
 document.getElementById("cal-sair").addEventListener("click",()=>{
   saveSession(null);
 
-  if (poolIntv) clearInterval(poolIntv);
+  if (poolIntv) {
+    clearInterval(poolIntv);
+    poolIntv = null;
+  }
 
   if (unsubscribeAulas) {
     unsubscribeAulas();
     unsubscribeAulas = null;
   }
+
+  atualizarBotoesProf();
+  renderLogin();
 });
-    atualizarBotoesProf();renderLogin();
-  });
   document.getElementById("cal-prev").addEventListener("click",()=>{semanaOff--;atualizarSemana();});
   document.getElementById("cal-next").addEventListener("click",()=>{semanaOff++;atualizarSemana();});
   document.getElementById("cal-seg")?.addEventListener("click",renderSeguranca);
