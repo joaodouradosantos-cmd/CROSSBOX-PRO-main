@@ -26,8 +26,8 @@
       .perf-kpi-row { grid-template-columns: repeat(4, 1fr); }
     }
     .perf-kpi-card {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.18);
       border-radius: 10px;
       padding: 10px 12px;
       text-align: center;
@@ -35,14 +35,15 @@
     .perf-kpi-value {
       font-size: 1.45rem;
       font-weight: 700;
-      color: #c8d87a;
+      color: #d4e87a;
       line-height: 1.1;
       font-family: "Stardos Stencil", system-ui, sans-serif;
       letter-spacing: 0.02em;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
     }
     .perf-kpi-label {
       font-size: 0.68rem;
-      color: rgba(255,255,255,0.55);
+      color: rgba(255,255,255,0.75);
       margin-top: 3px;
       text-transform: uppercase;
       letter-spacing: 0.06em;
@@ -60,13 +61,14 @@
 
     /* Linha de streak no topo da secção */
     .perf-streak-bar {
-      background: rgba(200,216,122,0.1);
-      border-left: 3px solid #c8d87a;
+      background: rgba(0,0,0,0.45);
+      border-left: 3px solid #d4e87a;
       border-radius: 0 8px 8px 0;
       padding: 6px 10px;
       margin-bottom: 14px;
       font-size: 0.82rem;
-      color: rgba(255,255,255,0.75);
+      color: rgba(255,255,255,0.9);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.7);
     }
   `;
   document.head.appendChild(style);
