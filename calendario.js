@@ -321,6 +321,9 @@ function renderGrid() {
     return;
   }
 
+  // Guardar qual dia estava aberto antes de re-render
+  const diaAbertoAntes = grid.querySelector(".cal-dia-aulas.cal-dia-aulas-open")?.dataset.dt || null;
+
   let html="";
   for (let i=0;i<7;i++) {
     const d=new Date(mon);d.setDate(mon.getDate()+i);
@@ -330,14 +333,43 @@ function renderGrid() {
     const aulasDia=(HORARIOS[dow]||[]).map(h=>cache[aulaId(dt,h)]).filter(Boolean);
     const diaCancelado=aulasDia.length>0&&aulasDia.every(a=>a.cancelada);
 
+    // Contadores para o card do dia
+    const totalAulas=aulasDia.length;
+    const inscritoNesteDia=aulasDia.some(a=>(a.inscritos||[]).some(x=>x.tel===session?.tel));
+    const aulasComVaga=aulasDia.filter(a=>!a.cancelada&&(a.vagas||8)-(a.inscritos||[]).length>0).length;
+
+    // Decidir se abre por omissão: hoje abre sempre, ou o que estava aberto, ou nenhum
+    const deveAbrir = dt===hoje || dt===diaAbertoAntes;
+
+    // Badge de resumo no card do dia
+    let resumoBadge="";
+    if(diaCancelado) resumoBadge=`<span class="cal-dia-badge cal-dia-badge-cancel">CANCELADO</span>`;
+    else if(inscritoNesteDia) resumoBadge=`<span class="cal-dia-badge cal-dia-badge-inscrito">✔ INSCRITO</span>`;
+    else if(aulasComVaga>0) resumoBadge=`<span class="cal-dia-badge cal-dia-badge-vaga">${aulasComVaga} VAGA${aulasComVaga>1?"S":""}</span>`;
+    else resumoBadge=`<span class="cal-dia-badge cal-dia-badge-cheio">ESGOTADO</span>`;
+
     html+=`<div class="cal-dia${isHoje?" cal-dia-hoje":""}${diaCancelado?" cal-dia-cancelado":""}">
-      <div class="cal-dia-hdr">
-        <span class="cal-dia-nome">${DIAS[dow]}</span>
-        <span class="cal-dia-data">${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}</span>
-        ${isHoje?`<span class="cal-hoje-pill">HOJE</span>`:""}
-        ${diaCancelado?`<span class="cal-cancelado-pill">CANCELADO</span>`:""}
-        ${isProf?`<button class="cal-btn-cancelar-dia${diaCancelado?" cal-btn-reabrir-dia":""}" data-dt="${dt}" data-cancelado="${diaCancelado}">${diaCancelado?"✅ REABRIR":"🚫 CANCELAR DIA"}</button>`:""}
+      <button class="cal-dia-hdr cal-dia-toggle" data-dt="${dt}" aria-expanded="${deveAbrir}">
+        <div class="cal-dia-hdr-left">
+          <span class="cal-dia-nome">${DIAS[dow]}</span>
+          <span class="cal-dia-data">${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}</span>
+          ${isHoje?`<span class="cal-hoje-pill">HOJE</span>`:""}
+        </div>
+        <div class="cal-dia-hdr-right">
+          ${resumoBadge}
+          <span class="cal-dia-chevron">${deveAbrir?"▲":"▼"}</span>
+        </div>
+      </button>`;
+
+    // Conteúdo colapsável das aulas
+    html+=`<div class="cal-dia-aulas${deveAbrir?" cal-dia-aulas-open":""}" data-dt="${dt}">`;
+
+    // Botão cancelar dia (professor) — dentro do painel colapsável
+    if(isProf) {
+      html+=`<div class="cal-prof-dia-bar">
+        <button class="cal-btn-cancelar-dia${diaCancelado?" cal-btn-reabrir-dia":""}" data-dt="${dt}" data-cancelado="${diaCancelado}">${diaCancelado?"✅ REABRIR DIA":"🚫 CANCELAR DIA"}</button>
       </div>`;
+    }
 
     for (const hora of (HORARIOS[dow]||[])) {
       const id=aulaId(dt,hora),aula=cache[id];
@@ -393,11 +425,25 @@ function renderGrid() {
         ${acaoHtml}${profHtml}
       </div>`;
     }
-    html+=`</div>`;
+    html+=`</div></div>`; // fecha cal-dia-aulas + cal-dia
   }
   grid.innerHTML=html;
 
-  // Eventos
+  // ── Toggle colapso dos dias ──────────────────────────────────
+  grid.querySelectorAll(".cal-dia-toggle").forEach(btn=>{
+    btn.addEventListener("click", e=>{
+      // impedir que cliques nos botões filhos (prof) abram/fechem o dia
+      if(e.target.closest(".cal-btn-cancelar-dia")) return;
+      const dt=btn.dataset.dt;
+      const painel=grid.querySelector(`.cal-dia-aulas[data-dt="${dt}"]`);
+      if(!painel) return;
+      const aberto=painel.classList.toggle("cal-dia-aulas-open");
+      btn.setAttribute("aria-expanded", aberto);
+      btn.querySelector(".cal-dia-chevron").textContent=aberto?"▲":"▼";
+    });
+  });
+
+  // ── Eventos das aulas ────────────────────────────────────────
   grid.querySelectorAll("[data-acao]").forEach(btn=>btn.addEventListener("click",async()=>{
     if(btn.dataset.acao==="inscrever"){btn.disabled=true;await inscrever(btn.dataset.id);}
     if(btn.dataset.acao==="cancelar"){if(!confirm("Cancelar inscrição?"))return;btn.disabled=true;await cancelarInscricao(btn.dataset.id);}
