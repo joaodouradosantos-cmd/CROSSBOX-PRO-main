@@ -1,0 +1,1341 @@
+/* ============================================================
+   CROSSBOX – CALENDÁRIO · ESTILO MILITAR
+   ============================================================ */
+
+/* ── Login ─────────────────────────────────────────────────── */
+.cal-login-box {
+  max-width: 380px;
+  margin: 0 auto;
+  padding: 28px 20px;
+  background: linear-gradient(160deg, #1a1a1a 0%, #111 100%);
+  border: 1px solid #3a3a2a;
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px #2a2a1a, 0 8px 32px rgba(0,0,0,.6);
+}
+
+.cal-login-icon {
+  font-size: 2.8rem;
+  text-align: center;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 8px rgba(180,160,60,.5));
+}
+
+.cal-login-logo {
+  display: block;
+  width: 110px;
+  height: auto;
+  margin: 0 auto 12px;
+  filter: drop-shadow(0 0 10px rgba(180,160,60,.4));
+}
+
+.cal-login-title {
+  font-family: 'Stardos Stencil', 'Arial Black', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-align: center;
+  color: #c8b84a;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.cal-login-sub {
+  font-size: .7rem;
+  letter-spacing: .25em;
+  text-align: center;
+  color: #666;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+/* ── Inputs ─────────────────────────────────────────────────── */
+.cal-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  background: #0d0d0d;
+  border: 1px solid #3a3a2a;
+  border-radius: 3px;
+  color: #d4c87a;
+  font-size: .9rem;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  letter-spacing: .04em;
+  outline: none;
+  transition: border-color .15s;
+}
+.cal-input:focus { border-color: #c8b84a; }
+.cal-input::placeholder { color: #444; }
+.cal-input-code {
+  text-transform: uppercase;
+  letter-spacing: .25em;
+  font-size: 1.1rem;
+  text-align: center;
+  font-family: monospace;
+}
+
+/* ── Botões ─────────────────────────────────────────────────── */
+.cal-btn-principal {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px;
+  background: linear-gradient(160deg, #c8b84a, #8a7a1a);
+  color: #111;
+  font-weight: 800;
+  font-size: .85rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-bottom: 8px;
+  box-shadow: 0 3px 0 #4a3a00;
+  transition: opacity .15s, transform .1s;
+}
+.cal-btn-principal:hover { opacity: .9; }
+.cal-btn-principal:active { transform: translateY(1px); box-shadow: 0 2px 0 #4a3a00; }
+.cal-btn-principal:disabled { opacity: .5; cursor: not-allowed; }
+
+.cal-btn-secundario {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  background: transparent;
+  color: #888;
+  font-size: .8rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border: 1px solid #333;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: border-color .15s, color .15s;
+}
+.cal-btn-secundario:hover { border-color: #666; color: #aaa; }
+
+.cal-btn-prof {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  background: transparent;
+  color: #555;
+  font-size: .75rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  border: 1px solid #2a2a2a;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.cal-btn-prof:hover { border-color: #555; color: #888; }
+
+.cal-divider-txt {
+  text-align: center;
+  color: #333;
+  font-size: .7rem;
+  letter-spacing: .15em;
+  margin: 14px 0;
+}
+
+/* ── Toolbar ─────────────────────────────────────────────────── */
+.cal-toolbar {
+  margin-bottom: 14px;
+}
+
+.cal-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.cal-user-pill {
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: #c8b84a;
+  text-transform: uppercase;
+}
+
+.cal-btn-sair {
+  background: transparent;
+  border: 1px solid #333;
+  color: #555;
+  font-size: .7rem;
+  letter-spacing: .1em;
+  padding: 4px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: border-color .15s, color .15s;
+}
+.cal-btn-sair:hover { border-color: #666; color: #888; }
+
+.cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.cal-nav-btn {
+  background: #1a1a1a;
+  border: 1px solid #3a3a2a;
+  color: #c8b84a;
+  width: 34px;
+  height: 34px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: .9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s;
+}
+.cal-nav-btn:hover { background: #252510; }
+
+.cal-semana-label {
+  flex: 1;
+  font-size: .85rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: #d4c87a;
+  text-align: center;
+}
+
+.cal-prof-tools {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.cal-btn-gerar {
+  padding: 8px 14px;
+  background: linear-gradient(160deg,#c8b84a,#8a7a1a);
+  color: #111;
+  font-weight: 800;
+  font-size: .75rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #4a3a00;
+  transition: opacity .15s;
+}
+.cal-btn-gerar:hover { opacity: .9; }
+.cal-btn-gerar:disabled { opacity: .5; cursor: not-allowed; }
+
+.cal-btn-tool {
+  padding: 8px 12px;
+  background: #1a1a1a;
+  border: 1px solid #3a3a2a;
+  color: #888;
+  font-size: .75rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.cal-btn-tool:hover { border-color: #666; color: #aaa; }
+
+/* ── Grid ─────────────────────────────────────────────────────── */
+.cal-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+/* ── Dia ─────────────────────────────────────────────────────── */
+.cal-dia {
+  background: linear-gradient(160deg,#1a1a14,#111109);
+  border: 1px solid #2e2e1e;
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.4);
+}
+
+.cal-dia-hoje {
+  border-color: #c8b84a;
+  box-shadow: 0 0 0 1px #c8b84a33, 0 4px 12px rgba(0,0,0,.5);
+}
+
+.cal-dia-hdr {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid #2a2a1a;
+  padding-bottom: 7px;
+  margin-bottom: 8px;
+}
+
+.cal-dia-nome {
+  font-family: 'Stardos Stencil', 'Arial Black', sans-serif;
+  font-size: .95rem;
+  font-weight: 700;
+  color: #c8b84a;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.cal-dia-data {
+  font-size: .75rem;
+  color: #555;
+  margin-left: auto;
+  letter-spacing: .05em;
+}
+
+.cal-hoje-pill {
+  font-size: .6rem;
+  background: #c8b84a;
+  color: #111;
+  font-weight: 800;
+  letter-spacing: .12em;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+/* ── Aula ─────────────────────────────────────────────────────── */
+.cal-aula {
+  background: #111109;
+  border: 1px solid #252515;
+  border-radius: 3px;
+  padding: 9px 10px;
+  margin-bottom: 7px;
+  transition: border-color .15s;
+}
+.cal-aula:last-child { margin-bottom: 0; }
+
+.cal-aula.cal-inscrito {
+  border-color: #5a8a3a;
+  background: #0d1209;
+  box-shadow: 0 0 0 1px #3a5a2033;
+}
+
+.cal-aula.cal-dim { opacity: .55; }
+
+.cal-aula-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.cal-hora {
+  font-family: 'Stardos Stencil','Arial Black',sans-serif;
+  font-size: .95rem;
+  font-weight: 700;
+  color: #d4c87a;
+  letter-spacing: .05em;
+}
+
+.cal-tipo-pill {
+  font-size: .65rem;
+  background: #1e1e10;
+  border: 1px solid #3a3a1a;
+  color: #888;
+  padding: 2px 7px;
+  border-radius: 2px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.cal-vagas {
+  font-size: .75rem;
+  font-weight: 700;
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: 2px;
+  letter-spacing: .05em;
+}
+.cal-vg-ok    { background: #0d2010; color: #4a8a3a; }
+.cal-vg-quase { background: #201508; color: #aa7a1a; }
+.cal-vg-cheio { background: #200808; color: #8a2a2a; }
+
+/* ── Nomes ─────────────────────────────────────────────────────── */
+.cal-nomes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 7px;
+  min-height: 22px;
+}
+
+.cal-nome {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #1a1a10;
+  border: 1px solid #2a2a18;
+  color: #aaa;
+  font-size: .72rem;
+  padding: 2px 7px;
+  border-radius: 2px;
+  letter-spacing: .03em;
+}
+.cal-nome-eu {
+  border-color: #5a8a3a;
+  color: #7ac85a;
+  background: #0d1a09;
+}
+.cal-nome-vazio {
+  font-size: .7rem;
+  color: #333;
+  font-style: italic;
+  padding: 2px 0;
+}
+
+.cal-rm {
+  background: none;
+  border: none;
+  color: #5a2a2a;
+  cursor: pointer;
+  font-size: .65rem;
+  padding: 0;
+  line-height: 1;
+  transition: color .15s;
+}
+.cal-rm:hover { color: #aa4a4a; }
+
+/* ── Botões ação ─────────────────────────────────────────────── */
+.cal-acao {
+  display: block;
+  width: 100%;
+  padding: 7px;
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: opacity .15s;
+  margin-top: 4px;
+}
+.cal-acao:disabled { opacity: .5; cursor: not-allowed; }
+
+.cal-acao-marcar {
+  background: linear-gradient(160deg,#4a7a2a,#2a4a10);
+  color: #d4f0a0;
+  box-shadow: 0 2px 0 #0d1a06;
+}
+.cal-acao-marcar:hover { opacity: .85; }
+
+.cal-acao-cancel {
+  background: linear-gradient(160deg,#6a1a1a,#3a0a0a);
+  color: #f0a0a0;
+  box-shadow: 0 2px 0 #1a0606;
+}
+.cal-acao-cancel:hover { opacity: .85; }
+
+/* ── Painel professor ─────────────────────────────────────────── */
+.cal-prof-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid #1e1e10;
+  flex-wrap: wrap;
+}
+.cal-prof-bar label {
+  font-size: .7rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.cal-inp-v {
+  width: 50px;
+  padding: 3px 5px;
+  background: #0d0d0d;
+  border: 1px solid #2a2a1a;
+  color: #c8b84a;
+  border-radius: 2px;
+  font-size: .8rem;
+}
+.cal-sel-t {
+  padding: 3px 6px;
+  background: #0d0d0d;
+  border: 1px solid #2a2a1a;
+  color: #888;
+  border-radius: 2px;
+  font-size: .75rem;
+}
+
+/* ── Painel lateral ───────────────────────────────────────────── */
+.cal-painel {
+  margin-top: 14px;
+  background: linear-gradient(160deg,#1a1a14,#111109);
+  border: 1px solid #2e2e1e;
+  border-radius: 4px;
+  padding: 14px;
+}
+
+.cal-painel-titulo {
+  font-family: 'Stardos Stencil','Arial Black',sans-serif;
+  font-size: .95rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: #c8b84a;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #2a2a1a;
+  padding-bottom: 8px;
+}
+
+/* ── Alunos lista ─────────────────────────────────────────────── */
+.cal-aluno-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #1a1a10;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cal-aluno-row strong { color: #c8b84a; font-size: .85rem; }
+.cal-aluno-row small  { color: #444; font-size: .72rem; margin-left: 6px; }
+
+.cal-row-bloq strong { color: #555; }
+
+.cal-pill-bloq {
+  font-size: .6rem;
+  background: #2a0a0a;
+  color: #7a2a2a;
+  border: 1px solid #3a1010;
+  padding: 1px 6px;
+  border-radius: 2px;
+  letter-spacing: .1em;
+  margin-left: 6px;
+}
+
+.cal-btn-bloquear {
+  padding: 5px 10px;
+  background: #1a0808;
+  border: 1px solid #3a1010;
+  color: #7a3a3a;
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.cal-btn-bloquear:hover { border-color: #6a2020; color: #aa4a4a; }
+
+.cal-btn-reativar {
+  padding: 5px 10px;
+  background: #0a1a08;
+  border: 1px solid #1a3a10;
+  color: #4a7a3a;
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.cal-btn-reativar:hover { border-color: #2a5a20; color: #6aaa4a; }
+
+/* ── Convite box ──────────────────────────────────────────────── */
+.cal-conv-box {
+  margin-top: 14px;
+  background: #0d0d09;
+  border: 1px solid #3a3a1a;
+  border-radius: 3px;
+  padding: 14px;
+  text-align: center;
+}
+.cal-conv-code {
+  font-family: monospace;
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: .3em;
+  color: #c8b84a;
+  background: #1a1a0a;
+  border: 1px dashed #3a3a1a;
+  border-radius: 3px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+/* ── Mensagens ────────────────────────────────────────────────── */
+.cal-loading {
+  text-align: center;
+  color: #555;
+  padding: 30px;
+  letter-spacing: .1em;
+  font-size: .85rem;
+}
+.cal-erro {
+  text-align: center;
+  color: #7a2a2a;
+  padding: 20px;
+  font-size: .85rem;
+}
+.cal-vazio-msg {
+  grid-column: 1/-1;
+  text-align: center;
+  color: #444;
+  padding: 40px 20px;
+  font-size: .9rem;
+  letter-spacing: .06em;
+}
+.cal-helper {
+  color: #555;
+  font-size: .78rem;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+/* ── Mobile ───────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .cal-grid { grid-template-columns: 1fr; }
+  .cal-nav  { justify-content: space-between; }
+  .cal-semana-label { flex:1; text-align:center; font-size:.8rem; }
+  .cal-prof-tools { gap: 6px; }
+  .cal-btn-tool, .cal-btn-gerar { font-size:.7rem; padding:7px 10px; }
+}
+
+/* ── Input hora professor ─────────────────────────────────── */
+.cal-inp-hora {
+  width: 90px;
+  padding: 3px 5px;
+  background: #0d0d0d;
+  border: 1px solid #5a3a1a;
+  color: #c8b84a;
+  border-radius: 2px;
+  font-size: .8rem;
+  cursor: pointer;
+}
+.cal-inp-hora:focus { border-color: #c8b84a; outline: none; }
+
+/* ── Aula cancelada ──────────────────────────────────────────── */
+.cal-aula.cal-cancelada {
+  background: #1a0808;
+  border-color: #5a1a1a;
+  opacity: 0.7;
+  position: relative;
+}
+.cal-aula.cal-cancelada .cal-hora {
+  text-decoration: line-through;
+  color: #6a3a3a;
+}
+.cal-aula.cal-cancelada::before {
+  content: "🚫 CANCELADA";
+  display: block;
+  font-size: .65rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  color: #8a2a2a;
+  margin-bottom: 4px;
+}
+
+/* ── Dia cancelado ───────────────────────────────────────────── */
+.cal-dia.cal-dia-cancelado {
+  border-color: #5a1a1a;
+  opacity: 0.75;
+}
+.cal-dia.cal-dia-cancelado .cal-dia-nome {
+  color: #6a3a3a;
+  text-decoration: line-through;
+}
+.cal-cancelado-pill {
+  font-size: .6rem;
+  background: #3a0a0a;
+  color: #8a2a2a;
+  border: 1px solid #5a1a1a;
+  padding: 2px 6px;
+  border-radius: 2px;
+  letter-spacing: .1em;
+  font-weight: 800;
+}
+
+/* ── Botões cancelar / reabrir ───────────────────────────────── */
+.cal-btn-cancelar-aula {
+  padding: 4px 8px;
+  background: #1a0808;
+  border: 1px solid #5a1a1a;
+  color: #8a3a3a;
+  font-size: .68rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+  margin-left: auto;
+}
+.cal-btn-cancelar-aula:hover { border-color: #8a2a2a; color: #cc4a4a; }
+
+.cal-btn-reabrir {
+  padding: 4px 8px;
+  background: #0a1a08;
+  border: 1px solid #2a5a1a;
+  color: #4a8a3a;
+  font-size: .68rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+  margin-left: auto;
+}
+.cal-btn-reabrir:hover { border-color: #4a8a2a; color: #7acc4a; }
+
+.cal-btn-cancelar-dia {
+  margin-left: auto;
+  padding: 3px 8px;
+  background: #1a0808;
+  border: 1px solid #4a1a1a;
+  color: #7a3a3a;
+  font-size: .62rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+  white-space: nowrap;
+}
+.cal-btn-cancelar-dia:hover { border-color: #8a2a2a; color: #cc4a4a; }
+.cal-btn-reabrir-dia {
+  background: #0a1a08;
+  border-color: #2a5a1a;
+  color: #4a8a3a;
+}
+.cal-btn-reabrir-dia:hover { border-color: #4a8a2a; color: #7acc4a; }
+
+/* ── Teclado PIN ──────────────────────────────────────────── */
+.cal-pin-dots {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 16px 0 12px;
+}
+.cal-pin-dots span {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #2a2a1a;
+  border: 2px solid #3a3a2a;
+  transition: background .15s, border-color .15s;
+}
+.cal-pin-dots span.active {
+  background: #c8b84a;
+  border-color: #c8b84a;
+  box-shadow: 0 0 8px rgba(200,184,74,.4);
+}
+.cal-pin-teclado {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.cal-pin-key {
+  padding: 14px;
+  background: #1a1a10;
+  border: 1px solid #2a2a18;
+  color: #d4c87a;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background .1s;
+}
+.cal-pin-key:hover { background: #252515; }
+.cal-pin-key:active { background: #303018; }
+.cal-pin-key-vazio { opacity: 0; pointer-events: none; }
+.cal-pin-erro {
+  text-align: center;
+  color: #8a2a2a;
+  font-size: .8rem;
+  min-height: 18px;
+  letter-spacing: .05em;
+}
+
+/* ── Modal segurança ─────────────────────────────────────── */
+.cal-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+}
+.cal-modal {
+  background: linear-gradient(160deg,#1a1a14,#111109);
+  border: 1px solid #3a3a2a;
+  border-radius: 6px;
+  padding: 20px;
+  width: 100%;
+  max-width: 340px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.cal-modal-titulo {
+  font-family: 'Stardos Stencil','Arial Black',sans-serif;
+  font-size: 1rem;
+  color: #c8b84a;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  text-align: center;
+  border-bottom: 1px solid #2a2a1a;
+  padding-bottom: 10px;
+}
+.cal-modal-sec {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #1a1a10;
+}
+.cal-modal-label {
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cal-pill-ok {
+  font-size: .6rem;
+  background: #0a2010;
+  color: #4a8a3a;
+  border: 1px solid #2a5a1a;
+  padding: 2px 6px;
+  border-radius: 2px;
+  letter-spacing: .1em;
+}
+
+/* ── Aviso aulas canceladas ──────────────────────────────── */
+.cal-aviso-banner {
+  background: linear-gradient(160deg,#2a0a0a,#1a0606);
+  border: 1px solid #6a1a1a;
+  border-radius: 4px;
+  padding: 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 0 0 1px #3a0a0a;
+}
+.cal-aviso-titulo {
+  font-family: 'Stardos Stencil','Arial Black',sans-serif;
+  font-size: .9rem;
+  color: #cc4a4a;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.cal-aviso-item {
+  font-size: .82rem;
+  color: #d4a0a0;
+  padding: 4px 0;
+  border-bottom: 1px solid #2a0a0a;
+}
+
+/* ── Professor inscrever aluno ───────────────────────────── */
+.cal-prof-inscrever {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #2a2a1a;
+}
+.cal-inp-prof-nome, .cal-inp-prof-tel {
+  flex: 1;
+  min-width: 100px;
+  padding: 5px 8px;
+  background: #0d0d0d;
+  border: 1px solid #2a2a1a;
+  color: #d4c87a;
+  border-radius: 2px;
+  font-size: .75rem;
+}
+.cal-btn-prof-add {
+  padding: 5px 10px;
+  background: linear-gradient(160deg,#2a5a1a,#1a3a0a);
+  border: none;
+  color: #a0d080;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.cal-btn-prof-add:hover { opacity: .85; }
+
+/* ── Botão ícone segurança ───────────────────────────────── */
+.cal-btn-icon {
+  background: transparent;
+  border: 1px solid #2a2a1a;
+  color: #666;
+  width: 30px;
+  height: 30px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: .85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color .15s, color .15s;
+}
+.cal-btn-icon:hover { border-color: #555; color: #aaa; }
+
+/* ── Total alunos ────────────────────────────────────────── */
+.cal-alunos-count {
+  font-size: .75rem;
+  color: #555;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #1a1a10;
+}
+
+/* ── Presenças aluno (WOD & Tools) ───────────────────────── */
+.presencas-resumo {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.presencas-stat {
+  flex: 1;
+  background: linear-gradient(160deg,#1a1a10,#111109);
+  border: 1px solid #3a3a1a;
+  border-radius: 4px;
+  padding: 14px;
+  text-align: center;
+}
+.presencas-num {
+  font-family: 'Stardos Stencil','Arial Black',sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #c8b84a;
+  line-height: 1;
+}
+.presencas-label {
+  font-size: .65rem;
+  color: #555;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.presencas-mes {
+  margin-bottom: 12px;
+  border: 1px solid #2a2a1a;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.presencas-mes-hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1a1a10;
+  padding: 8px 12px;
+  font-size: .8rem;
+  font-weight: 700;
+  color: #c8b84a;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.presencas-mes-total {
+  font-size: .75rem;
+  background: #0d2010;
+  color: #4a8a3a;
+  border: 1px solid #2a5a1a;
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+.presencas-lista { padding: 4px 0; }
+.presencas-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 5px 12px;
+  border-bottom: 1px solid #1a1a10;
+  font-size: .78rem;
+}
+.presencas-item:last-child { border-bottom: none; }
+.presencas-dia  { color: #888; min-width: 70px; }
+.presencas-hora { color: #c8b84a; font-weight: 700; min-width: 45px; }
+.presencas-tipo { color: #555; font-size: .7rem; letter-spacing: .05em; }
+
+/* ── Tabela presenças professor ──────────────────────────── */
+.cal-presencas-tabela {
+  overflow-x: auto;
+  font-size: .78rem;
+}
+.cal-pres-hdr, .cal-pres-row {
+  display: grid;
+  grid-template-columns: 2fr repeat(6, 1fr) 1fr;
+  gap: 4px;
+  align-items: center;
+  padding: 6px 8px;
+  border-bottom: 1px solid #1a1a10;
+}
+.cal-pres-hdr {
+  font-size: .65rem;
+  font-weight: 700;
+  color: #555;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  background: #111109;
+  position: sticky;
+  top: 0;
+}
+.cal-pres-row:nth-child(even) { background: #0d0d09; }
+.cal-pres-nome {
+  color: #c8b84a;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cal-pres-val {
+  text-align: center;
+  color: #7ac85a;
+  font-weight: 700;
+}
+.cal-pres-zero { color: #333; }
+.cal-pres-total {
+  text-align: center;
+  font-weight: 800;
+  color: #c8b84a;
+  background: #1a1a0a;
+  border-radius: 2px;
+  padding: 2px 4px;
+}
+
+
+/* AJUSTE MOBILE/APP – abrir aulas para baixo */
+#sec-calendario,
+.cal-grid,
+.cal-dia{
+  width:100%;
+  max-width:100%;
+}
+
+.cal-grid{
+  display:grid;
+  grid-template-columns:1fr !important;
+}
+
+body{
+  overflow-x:hidden;
+}
+
+
+/* Melhorias visuais aulas/calendário */
+#sec-calendario,
+#sec-calendario * {
+  color: #f5f5f5 !important;
+}
+
+#cal-grid,
+.cal-grid {
+  font-size: 1.02rem !important;
+}
+
+.cal-dia,
+.cal-aula,
+.cal-card,
+.cal-event {
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 12px !important;
+  padding: 10px !important;
+}
+
+.cal-dia h3,
+.cal-aula strong,
+.cal-event strong {
+  font-size: 1.05rem !important;
+  color: #ffffff !important;
+}
+
+.cal-dia,
+.cal-aula,
+.cal-event,
+#cal-grid button {
+  font-weight: 600 !important;
+}
+
+#cal-grid button {
+  font-size: 1rem !important;
+}
+
+/* ============================================================
+   CROSSBOX PRO – FINAL AULAS / CALENDÁRIO / PRESENÇAS
+   Objetivo: zero fundo branco, painel verde militar, submenus por cima
+   e conteúdo a abrir por baixo dos botões, como na WOD.
+   ============================================================ */
+
+/* Painel principal das Aulas */
+#sec-calendario > .card {
+  background:
+    linear-gradient(180deg, rgba(49, 72, 37, .96) 0%, rgba(23, 33, 18, .98) 58%, rgba(12, 17, 10, .99) 100%) !important;
+  background-color: #172112 !important;
+  background-image:
+    linear-gradient(180deg, rgba(49, 72, 37, .96) 0%, rgba(23, 33, 18, .98) 58%, rgba(12, 17, 10, .99) 100%) !important;
+  color: #f5f7ee !important;
+  border: 1px solid rgba(139, 160, 94, .45) !important;
+  border-radius: 18px !important;
+  box-shadow:
+    0 12px 26px rgba(0,0,0,.48),
+    inset 0 0 0 1px rgba(255,255,255,.05) !important;
+}
+
+/* Submenus do calendário ficam sempre em cima; conteúdo abre logo por baixo */
+#cal-nav-grid {
+  position: relative !important;
+  z-index: 5 !important;
+  margin-bottom: 10px !important;
+}
+
+#sec-calendario .option-section {
+  position: relative !important;
+  z-index: 1 !important;
+  margin-top: 8px !important;
+  background:
+    linear-gradient(180deg, rgba(42, 63, 31, .96) 0%, rgba(20, 31, 15, .98) 100%) !important;
+  background-color: #142010 !important;
+  color: #f5f7ee !important;
+  border: 1px solid rgba(112, 148, 82, .34) !important;
+  border-radius: 14px !important;
+  padding: 12px !important;
+  box-shadow: inset 0 0 18px rgba(0,0,0,.28) !important;
+}
+
+/* Remover brancos internos das janelas Calendário/Presenças/Alunos/Convites */
+#sec-calendario #cal-wrap,
+#sec-calendario #presencas-wrap,
+#sec-calendario #cal-alunos-wrap,
+#sec-calendario #cal-convites-wrap,
+#sec-calendario .cal-toolbar,
+#sec-calendario .cal-topbar,
+#sec-calendario .cal-nav,
+#sec-calendario .cal-grid,
+#sec-calendario .cal-dia,
+#sec-calendario .cal-aula,
+#sec-calendario .cal-card,
+#sec-calendario .cal-event,
+#sec-calendario .presencas-resumo,
+#sec-calendario .presencas-card,
+#sec-calendario .presencas-mes,
+#sec-calendario .presencas-lista,
+#sec-calendario .presencas-item,
+#sec-calendario .cal-presencas-tabela,
+#sec-calendario .cal-pres-row,
+#sec-calendario .cal-pres-hdr {
+  background-color: transparent !important;
+  color: #f5f7ee !important;
+}
+
+/* Caixas de conteúdo em verde militar, nunca branco */
+#sec-calendario .cal-dia,
+#sec-calendario .cal-aula,
+#sec-calendario .cal-card,
+#sec-calendario .cal-event,
+#sec-calendario .presencas-card,
+#sec-calendario .presencas-mes,
+#sec-calendario .cal-pres-row {
+  background:
+    linear-gradient(180deg, rgba(28, 43, 20, .96) 0%, rgba(13, 21, 10, .98) 100%) !important;
+  border: 1px solid rgba(119, 151, 84, .32) !important;
+  color: #f5f7ee !important;
+}
+
+/* Tabelas/listas dentro das Aulas sem branco */
+#sec-calendario table,
+#sec-calendario thead,
+#sec-calendario tbody,
+#sec-calendario tr,
+#sec-calendario th,
+#sec-calendario td,
+#sec-calendario .scroll {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #f5f7ee !important;
+  border-color: rgba(139,160,94,.28) !important;
+}
+
+/* Inputs e botões internos coerentes com o tema */
+#sec-calendario input,
+#sec-calendario select,
+#sec-calendario textarea {
+  background: rgba(9, 14, 7, .88) !important;
+  color: #f5f7ee !important;
+  border: 1px solid rgba(139,160,94,.42) !important;
+}
+
+#sec-calendario .helper-text,
+#sec-calendario p,
+#sec-calendario h3,
+#sec-calendario span,
+#sec-calendario strong,
+#sec-calendario label {
+  color: #f5f7ee !important;
+}
+
+#sec-calendario .cal-nav-btn,
+#sec-calendario .opt-btn {
+  background: linear-gradient(145deg, #222821, #0f120e) !important;
+  color: #fff !important;
+  border-color: rgba(139,160,94,.35) !important;
+}
+
+#sec-calendario .cal-nav-btn.active,
+#sec-calendario .opt-btn.active {
+  background: linear-gradient(145deg, #1f7b3a, #0f4220) !important;
+  color: #fff !important;
+  border-color: #1f7b3a !important;
+}
+
+/* Botão Reservas eliminado da WOD & Tools; dados/localStorage preservados */
+#sec-opcoes .opt-btn[data-target="sec-reservas"] {
+  display: none !important;
+}
+/* FIX FINAL — AULAS ABREM PARA BAIXO */
+#sec-calendario {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+#sec-calendario > .card {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  background: linear-gradient(180deg, #314825 0%, #172112 60%, #0c110a 100%) !important;
+}
+
+#cal-nav-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  width: 100% !important;
+  margin-bottom: 12px !important;
+}
+
+#sec-calendario .option-section {
+  display: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  clear: both !important;
+  float: none !important;
+  position: relative !important;
+  left: 0 !important;
+  right: auto !important;
+  top: auto !important;
+  margin-top: 10px !important;
+  box-sizing: border-box !important;
+  background: linear-gradient(180deg, #2a3f1f 0%, #142010 100%) !important;
+}
+
+#sec-calendario .option-section.active {
+  display: block !important;
+}
+
+#cal-wrap,
+#presencas-wrap,
+#cal-alunos-wrap,
+#cal-convites-wrap {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  background: transparent !important;
+}
+
+/* ── Dias colapsáveis (v12) ───────────────────────────────── */
+
+/* O header do dia vira botão clicável */
+.cal-dia-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 9px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #2a2a1a;
+  margin-bottom: 0;
+  gap: 8px;
+  transition: background .15s;
+}
+.cal-dia-toggle:hover {
+  background: rgba(200,184,74,.06);
+}
+.cal-dia-hoje .cal-dia-toggle {
+  border-bottom-color: #c8b84a44;
+}
+
+.cal-dia-hdr-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.cal-dia-hdr-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Seta de abrir/fechar */
+.cal-dia-chevron {
+  font-size: .65rem;
+  color: #555;
+  transition: color .15s;
+  min-width: 10px;
+  text-align: center;
+}
+.cal-dia-hoje .cal-dia-chevron { color: #c8b84a; }
+
+/* Badges de resumo no card do dia */
+.cal-dia-badge {
+  font-size: .6rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  padding: 2px 7px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.cal-dia-badge-vaga    { background: #0d2010; color: #4a8a3a; border: 1px solid #2a5a1a; }
+.cal-dia-badge-inscrito{ background: #0a2008; color: #7ac85a; border: 1px solid #3a6a20; }
+.cal-dia-badge-cheio   { background: #200808; color: #7a3a3a; border: 1px solid #4a1a1a; }
+.cal-dia-badge-cancel  { background: #3a0a0a; color: #8a2a2a; border: 1px solid #5a1a1a; }
+
+/* Painel colapsável das aulas */
+.cal-dia-aulas {
+  display: none;
+  padding: 8px 4px 4px;
+  animation: cal-slide-down .18s ease;
+}
+.cal-dia-aulas-open {
+  display: block;
+}
+
+@keyframes cal-slide-down {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Barra de acções do professor dentro do painel */
+.cal-prof-dia-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #2a2a1a;
+}
