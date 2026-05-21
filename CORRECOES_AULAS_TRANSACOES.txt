@@ -1,0 +1,26 @@
+CORREÇÕES APLICADAS NESTA VERSÃO
+
+1) calendario.js
+- A escuta das aulas passou a usar query por semana:
+  where("data", ">=", ini) + where("data", "<=", fim)
+  Em vez de ouvir a coleção inteira "aulas".
+- As inscrições de alunos passaram para runTransaction.
+  Isto evita sobreposição de inscrições quando dois alunos clicam ao mesmo tempo na última vaga.
+- O cancelamento de inscrição e a inscrição feita pelo professor também passaram para transação.
+- O cancelamento/reabertura de um dia passou a usar query por data + writeBatch.
+- A alteração de hora da aula foi corrigida:
+  cria/move a aula para o novo ID da nova hora e elimina o documento antigo dentro de transaction.
+  Se já existir uma aula na nova hora, não substitui nem apaga dados.
+- A renderização passou a incluir horários personalizados já existentes no Firebase, além dos HORARIOS fixos.
+  Assim, se o professor alterar a hora para uma hora fora da grelha original, a aula continua visível.
+
+2) index.html
+- Atualizada a versão do import do calendario.js para v=14, para forçar carregamento do ficheiro novo.
+
+3) service-worker.js
+- Atualizado o CACHE_NAME para crossbox-cache-v12-aulas-transacao, para evitar cache antigo.
+
+4) Segurança dos dados locais
+- Não foram alteradas as chaves de localStorage dos 1RM/WOD.
+- Não foi introduzido localStorage.clear().
+- Não foi introduzido removeItem() para crossfit_1rm nem crossfit_1rm_history.
