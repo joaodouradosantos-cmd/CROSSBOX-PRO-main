@@ -473,21 +473,17 @@ function escutarSemana(off) {
     g.innerHTML = '<div class="cal-loading">🔄 A carregar aulas...</div>';
   }
 
-  const q = query(
-    collection(db, "aulas"),
-    where("data", ">=", ini),
-    where("data", "<=", fim)
-  );
-
+  // Lê colecção completa e filtra no cliente
+  // (a query com range em "data" exige índice Firestore não criado ainda)
+  // Para optimizar no futuro: criar índice "data" ASC no Firebase Console
   unsubscribeAulas = onSnapshot(
-    q,
+    collection(db, "aulas"),
     snap => {
       cache = {};
-
       snap.forEach(d => {
-        cache[d.id] = d.data();
+        const a = d.data();
+        if (a.data >= ini && a.data <= fim) cache[d.id] = a;
       });
-
       renderGrid();
     },
     e => {
