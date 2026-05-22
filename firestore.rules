@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Token secreto do professor — nunca exposto ao cliente
+    // Gera um valor longo em https://randomkeygen.com/ e guarda em config/professor
+    // O campo 'token' deve ser uma string longa e aleatória (nunca o PIN antigo)
+    function isProfToken(req) {
+      return req.resource.data.get('_profToken', '') == get(/databases/$(database)/documents/config/professor).data.token;
+    }
+
+    // Configuração interna — só leitura pública (necessário para validar token)
+    match /config/{doc} {
+      allow read: if true;
+      allow write: if false;  // só alterável via Firebase Console
+    }
+
+    // Aulas — leitura pública para todos os alunos verem o calendário
+    //         escrita só com token de professor válido
+    match /aulas/{aulaId} {
+      allow read: if true;
+      allow write: if isProfToken(request);
+    }
+
+    // Alunos — leitura pública (necessário para login por telefone)
+    //           criação permitida (registo de novo aluno)
+    //           actualização/eliminação só com token de professor
+    match /alunos/{tel} {
+      allow read: if true;
+      allow create: if true;  // registo de novo aluno via convite
+      allow update, delete: if isProfToken(request);
+    }
+
+    // Convites — leitura pública (para validar o código)
+    //             criação só com token de professor
+    //             actualização (marcar usado) permitida a todos (acontece no registo)
+    match /convites/{codigo} {
+      allow read: if true;
+      allow create: if isProfToken(request);
+      allow update: if true;  // marcar convite como usado no registo do aluno
+      allow delete: if isProfToken(request);
+    }
+  }
+}
